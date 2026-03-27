@@ -485,6 +485,8 @@
     .tt-step{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#c9a84c;margin-bottom:5px}
     .tt-title{font-size:14px;font-weight:700;color:#1c1917;margin-bottom:7px;line-height:1.3}
     .tt-body{font-size:12.5px;color:#6b6860;line-height:1.55;margin-bottom:14px}
+    .tt-prob-label,.tt-soln-label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:10px}
+    .tt-prob-label{color:#c9a84c;margin-top:0}.tt-soln-label{color:#1d4ed8}
     .tt-footer{display:flex;align-items:center;justify-content:space-between}
     .tt-dots{display:flex;gap:4px}
     .tt-dot{width:5px;height:5px;border-radius:50%;background:#e0ddd6;transition:background .15s}
@@ -1175,11 +1177,11 @@
 </div>
 <script>
 const TOUR_STEPS=[
-  {target:'.stats-row',title:'Live metrics from Sanity',body:'Five headline numbers queried in real time from Sanity\'s Content Lake via GROQ. Critical and Needs Review counts update automatically as Sanity Functions flag articles on publish.',pos:'bottom'},
-  {target:'.sidebar',title:'Filter by priority or flag type',body:'Filter the queue by staleness tier — Critical (score 80+), High, Needs Review — or by specific flag type: OFFER_EXPIRED, VALUATION_CHANGED, BROKEN_AFFILIATE, SEO_DECAY.',pos:'right'},
-  {target:'#articleRows',title:'Priority-ranked article queue',body:'Each article has a composite staleness score (0–100) weighted across recency, flag count, SEO decay, and affiliate link age. Click any row to open the detail panel.',pos:'top'},
-  {target:'#detailPanel',title:'Contextual issue detail',body:'Not just "this is stale" — the panel surfaces the specific issue, the affected Sanity fields, and a suggested next step. "Open in Sanity Studio" jumps directly to that document.',pos:'left',before:()=>{const r=document.querySelector('#articleRows .article-row');if(r)r.click();},delay:650},
-  {target:'.how-toggle',title:'See the GROQ query powering this',body:'Click "How this works" to reveal the live GROQ query, the Sanity schema TypeScript definition, and the four-pipeline automation architecture behind the dashboard.',pos:'bottom'}
+  {target:'.stats-row',title:'Editorial health at a glance',body:'<span class="tt-prob-label">Problem</span>Editors don\'t know which articles are stale until a reader complains or revenue drops.<span class="tt-soln-label">Solution</span>These numbers update automatically as articles are flagged — giving the team a live health snapshot without any manual checking.',pos:'bottom'},
+  {target:'.sidebar',title:'Prioritize what matters most',body:'<span class="tt-prob-label">Problem</span>Not all stale articles are equally urgent, but editors can\'t prioritize what they can\'t sort.<span class="tt-soln-label">Solution</span>Filter by severity tier or flag type to focus on what costs the most: expired offers before a reader clicks, broken links before they lose affiliate revenue.',pos:'right'},
+  {target:'#articleRows',title:'Ranked by actual urgency',body:'<span class="tt-prob-label">Problem</span>A flat list of articles forces editors to decide importance themselves — which takes time and introduces subjectivity.<span class="tt-soln-label">Solution</span>Each article gets a composite staleness score across recency, flag count, SEO decay, and affiliate link age. The most critical work surfaces first. Click any row to see details.',pos:'top'},
+  {target:'#detailPanel',title:'Know the problem and the fix',body:'<span class="tt-prob-label">Problem</span>Knowing an article is stale isn\'t enough — editors need to know exactly why and what to do next.<span class="tt-soln-label">Solution</span>The panel identifies the specific issue, the affected fields, and a suggested action — with a direct link to open the document in Sanity Studio.',pos:'left',before:()=>{const r=document.querySelector('#articleRows .article-row');if(r)r.click();},delay:650},
+  {target:'.how-toggle',title:'The logic is auditable',body:'<span class="tt-prob-label">Problem</span>Editors won\'t trust a black-box staleness score — buy-in requires understanding how it works.<span class="tt-soln-label">Solution</span>Click "How this works" to see the GROQ query, the scoring model, and the automation pipeline. Nothing is hidden.',pos:'bottom'}
 ];
 let _tStep=0,_tActive=false;
 function startTour(){_tStep=0;_tActive=true;_tShow();}
@@ -1193,7 +1195,7 @@ function _tPlace(el,s){
   document.getElementById('tourHL').style.cssText=`display:block;left:${r.left-p}px;top:${r.top-p}px;width:${r.width+p*2}px;height:${r.height+p*2}px`;
   document.getElementById('ttStep').textContent=`${_tStep+1} of ${TOUR_STEPS.length}`;
   document.getElementById('ttTitle').textContent=s.title;
-  document.getElementById('ttBody').textContent=s.body;
+  document.getElementById('ttBody').innerHTML=s.body;
   document.getElementById('ttNext').textContent=_tStep===TOUR_STEPS.length-1?'Done ✓':'Next →';
   document.getElementById('ttPrev').style.visibility=_tStep===0?'hidden':'visible';
   document.querySelectorAll('.tt-dot').forEach((d,i)=>d.classList.toggle('active',i===_tStep));
