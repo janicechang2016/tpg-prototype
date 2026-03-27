@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPG Card Stack Recommender</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    /* ── NAV ── */
+    .tpg-header {
+      background: #fff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tpg-logo { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #1a1a1a; }
+    .tpg-nav-links { display: flex; gap: 20px; list-style: none; font-size: 12px; font-weight: 500; color: #555; }
+    .tpg-nav-links li { cursor: pointer; }
+    .tpg-nav-links li:hover { color: #C41E3A; }
+    .tpg-nav-links li.active { color: #C41E3A; font-weight: 600; }
+    .proto-badge {
+      margin-left: auto;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      background: #fff4f0; color: #C41E3A; border: 1px solid #f5c6bc;
+      border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 36px;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+      position: relative;
+    }
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: #e0ddd6;
+      z-index: 0;
+    }
+    .step-item.done:not(:last-child)::after { background: #C41E3A; }
+    .step-circle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid #e0ddd6;
+      background: #f5f5f0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #aaa;
+      position: relative; z-index: 1;
+      transition: all 0.2s;
+    }
+    .step-item.active .step-circle {
+      border-color: #C41E3A; background: #C41E3A; color: white;
+    }
+    .step-item.done .step-circle {
+      border-color: #C41E3A; background: #C41E3A; color: white;
+    }
+    .step-label {
+      font-size: 11px; color: #aaa; font-weight: 500; text-align: center; white-space: nowrap;
+    }
+    .step-item.active .step-label, .step-item.done .step-label { color: #C41E3A; font-weight: 600; }
+
+    /* ── STEP PANELS ── */
+    .step-panel { display: none; }
+    .step-panel.visible { display: block; }
+
+    .step-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .step-sub { font-size: 13.5px; color: #777; margin-bottom: 28px; line-height: 1.5; }
+
+    /* ── STEP 1: SPENDING ── */
+    .spending-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .spend-card {
+      background: #fff;
+      border: 1px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .spend-icon { font-size: 22px; }
+    .spend-label { font-size: 12px; font-weight: 600; color: #333; }
+    .spend-sub { font-size: 11px; color: #aaa; }
+    .spend-input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .spend-input-wrap:focus-within { border-color: #C41E3A; }
+    .spend-currency {
+      padding: 0 8px;
+      font-size: 13px;
+      color: #888;
+      background: #faf9f7;
+      border-right: 1px solid #ddd;
+      height: 34px;
+      display: flex; align-items: center;
+    }
+    .spend-input {
+      flex: 1;
+      border: none;
+      padding: 0 10px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a1a;
+      outline: none;
+      height: 34px;
+      width: 0;
+      background: #fff;
+    }
+    .spend-freq { font-size: 10px; color: #aaa; }
+
+    /* ── STEP 2: GOALS ── */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .goal-card {
+      border: 2px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fff;
+    }
+    .goal-card:hover { border-color: #C41E3A; }
+    .goal-card.selected { border-color: #C41E3A; background: #fff8f8; }
+    .goal-card.selected .goal-check { opacity: 1; }
+    .goal-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+    .goal-icon { font-size: 24px; }
+    .goal-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #C41E3A;
+      color: white;
+      font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .goal-title { font-size: 13.5px; font-weight: 600; color: #1a1a1a; }
+    .goal-desc { font-size: 11.5px; color: #777; line-height: 1.4; }
+
+    .freq-row {
+      margin-bottom: 28px;
+    }
+    .freq-label { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 10px; }
+    .freq-options { display: flex; gap: 10px; }
+    .freq-btn {
+      flex: 1;
+      padding: 9px 0;
+      border: 2px solid #e0ddd6;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12.5px;
+      font-family: 'DM Sans', sans-serif;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .freq-btn:hover { border-color: #C41E3A; color: #C41E3A; }
+    .freq-btn.selected { border-color: #C41E3A; background: #fff8f8; color: #C41E3A; font-weight: 600; }
+
+    .intl-row { margin-bottom: 28px; }
+    .toggle-row { display: flex; gap: 10px; }
+    .toggle-btn {
+      padding: 8px 20px;
+      border: 2px solid #e0ddd6;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12.5px;
+      font-family: 'DM Sans', sans-serif;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .toggle-btn.selected { border-color: #C41E3A; background: #fff8f8; color: #C41E3A; font-weight: 600; }
+
+    /* ── NAVIGATION BUTTONS ── */
+    .btn-row { display: flex; gap: 10px; align-items: center; }
+    .btn-primary {
+      padding: 11px 28px;
+      background: #C41E3A; color: white;
+      border: none; border-radius: 8px;
+      font-size: 13.5px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-back {
+      padding: 11px 20px;
+      background: transparent; color: #888;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 13px; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-back:hover { color: #555; border-color: #aaa; }
+
+    /* ── STEP 3: RESULTS ── */
+    .results-summary {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      color: white;
+    }
+    .summary-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #888; margin-bottom: 4px;
+    }
+    .summary-value-row {
+      display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .summary-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px; font-weight: 600; color: #fff;
+      line-height: 1;
+    }
+    .summary-big span { font-size: 16px; color: #aaa; font-family: 'DM Sans', sans-serif; }
+    .summary-net { font-size: 13px; color: #aaa; }
+    .summary-net strong { color: #6ee7b7; }
+    .coverage-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .cov-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .cov-chip.covered { background: rgba(255,255,255,0.1); color: #6ee7b7; }
+    .cov-chip.partial { background: rgba(255,255,255,0.07); color: #fbbf24; }
+    .cov-chip.uncovered { background: rgba(255,255,255,0.05); color: #888; }
+
+    /* Card result cards */
+    .card-stack { margin-bottom: 24px; }
+    .stack-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #888; margin-bottom: 14px;
+    }
+    .rec-card {
+      background: #fff;
+      border: 1px solid #e0ddd6;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .rec-card-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid #f0ede6;
+    }
+    .card-art {
+      width: 80px; height: 50px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      padding: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-art-name {
+      font-size: 7px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+    .card-art::before {
+      content: '';
+      position: absolute;
+      top: -10px; right: -10px;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .card-art::after {
+      content: '';
+      position: absolute;
+      bottom: -15px; right: 10px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .rec-card-info { flex: 1; min-width: 0; }
+    .rec-card-name { font-size: 14.5px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+    .rec-card-issuer { font-size: 11.5px; color: #888; margin-bottom: 8px; }
+    .rec-card-why {
+      font-size: 12px; color: #555;
+      background: #faf9f7;
+      border-left: 2px solid #C41E3A;
+      padding: 6px 10px;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.5;
+    }
+    .rec-card-meta {
+      display: flex; gap: 12px; align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid #f0ede6;
+      flex-wrap: wrap;
+    }
+    .meta-item { font-size: 12px; color: #555; }
+    .meta-item strong { color: #1a1a1a; }
+    .meta-sep { color: #ddd; }
+
+    .earn-table { width: 100%; border-collapse: collapse; }
+    .earn-table th {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #aaa;
+      padding: 10px 20px 8px;
+      text-align: left;
+    }
+    .earn-table th:last-child, .earn-table td:last-child { text-align: right; }
+    .earn-table td {
+      padding: 8px 20px;
+      font-size: 12.5px;
+      border-top: 1px solid #f5f4f1;
+    }
+    .earn-table tr.highlight-row td { background: #fdf5f5; }
+    .earn-rate { font-weight: 600; color: #1a1a1a; }
+    .earn-rate.top { color: #C41E3A; }
+    .earn-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .earn-bar {
+      height: 4px; border-radius: 2px; background: #e0ddd6;
+      flex: 1; max-width: 80px; position: relative;
+    }
+    .earn-bar-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      border-radius: 2px; background: #C41E3A;
+      transition: width 0.4s ease;
+    }
+    .earn-annual { font-size: 12px; color: #555; }
+
+    /* Earnings breakdown table */
+    .breakdown-section {
+      background: #fff;
+      border: 1px solid #e0ddd6;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .breakdown-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e0ddd6;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .breakdown-table { width: 100%; border-collapse: collapse; }
+    .breakdown-table th {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #aaa;
+      padding: 10px 20px 8px; text-align: left; background: #faf9f7;
+    }
+    .breakdown-table td {
+      padding: 9px 20px;
+      font-size: 12.5px;
+      border-top: 1px solid #f0ede6;
+    }
+    .breakdown-table td:last-child { text-align: right; color: #27ae60; font-weight: 600; }
+    .best-card-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; padding: 2px 8px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Apply section */
+    .apply-section {
+      background: #fff;
+      border: 1px solid #e0ddd6;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .apply-text { flex: 1; }
+    .apply-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .apply-sub { font-size: 12px; color: #777; }
+    .apply-btn {
+      padding: 10px 24px;
+      background: #C41E3A; color: white;
+      border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .apply-btn:hover { opacity: 0.88; }
+
+    /* Design decision / Sanity notes */
+    .dd-marker {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #e8e5de; color: #888;
+      font-size: 9px; font-weight: 700;
+      cursor: help; position: relative; vertical-align: middle; margin-left: 3px;
+    }
+    .dd-marker:hover .dd-tooltip { display: block; }
+    .dd-tooltip {
+      display: none;
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a; color: #fff;
+      font-size: 11px; line-height: 1.5;
+      padding: 8px 12px; border-radius: 7px;
+      width: 220px; z-index: 200;
+      font-weight: 400; pointer-events: none;
+    }
+    .dd-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #1a1a1a;
+    }
+    .sanity-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; background: #f0f4fa; color: #2a4a8e;
+      border: 1px solid #c0cce8; border-radius: 20px; padding: 2px 8px;
+    }
+    .sanity-dot { width: 6px; height: 6px; border-radius: 50%; background: #e05c30; }
+
+    .footnote {
+      font-size: 11.5px; color: #888; line-height: 1.6;
+      padding: 16px 20px;
+      background: #faf9f7;
+      border: 1px solid #e8e5de;
+      border-radius: 8px;
+    }
+
+    .restart-btn {
+      background: none; border: none;
+      font-size: 12.5px; color: #C41E3A;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; text-decoration: underline;
+      padding: 0; margin-top: 16px; display: block;
+    }
+
+    @media (max-width: 600px) {
+      .spending-grid { grid-template-columns: repeat(2, 1fr); }
+      .goal-grid { grid-template-columns: 1fr; }
+      .summary-big { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="tpg-header">
+  <span class="tpg-logo">The Points Guy</span>
+  <ul class="tpg-nav-links">
+    <li>News</li>
+    <li>Reviews</li>
+    <li>Guides</li>
+    <li>Deals</li>
+    <li class="active">Tools</li>
+    <li>Credit Cards</li>
+  </ul>
+  <span class="proto-badge">Prototype</span>
+</header>
+
+<div class="page">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressBar">
+    <div class="step-item active" id="step-ind-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Your spending</div>
+    </div>
+    <div class="step-item" id="step-ind-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Your goals</div>
+    </div>
+    <div class="step-item" id="step-ind-3">
+      <div class="step-circle">✓</div>
+      <div class="step-label">Your stack</div>
+    </div>
+  </div>
+
+  <!-- ── STEP 1: SPENDING ── -->
+  <div class="step-panel visible" id="panel-1">
+    <h1 class="step-heading">What do you spend money on?
+      <span class="dd-marker">i<span class="dd-tooltip">Unlike CardMatch, which only checks eligibility, this tool optimizes for earning potential across your real spending patterns — the PM insight that drives this feature.</span></span>
+    </h1>
+    <p class="step-sub">Enter your average monthly spend in each category. We'll use this to calculate which card combination earns you the most value.</p>
+
+    <div class="spending-grid">
+      <div class="spend-card">
+        <div class="spend-icon">🍽️</div>
+        <div class="spend-label">Dining</div>
+        <div class="spend-sub">Restaurants, takeout, delivery</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-dining" value="600" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-icon">🛒</div>
+        <div class="spend-label">Groceries</div>
+        <div class="spend-sub">Supermarkets, online grocery</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-groceries" value="500" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-icon">✈️</div>
+        <div class="spend-label">Travel</div>
+        <div class="spend-sub">Flights, hotels, car rentals</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-travel" value="400" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-icon">⛽</div>
+        <div class="spend-label">Gas & Transit</div>
+        <div class="spend-sub">Gas stations, rideshare, transit</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-gas" value="200" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-icon">📺</div>
+        <div class="spend-label">Streaming</div>
+        <div class="spend-sub">Netflix, Spotify, Apple TV+</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-streaming" value="60" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+      <div class="spend-card">
+        <div class="spend-icon">🛍️</div>
+        <div class="spend-label">Everything else</div>
+        <div class="spend-sub">Shopping, bills, misc.</div>
+        <div class="spend-input-wrap">
+          <span class="spend-currency">$</span>
+          <input class="spend-input" type="number" id="s-other" value="800" min="0" />
+        </div>
+        <div class="spend-freq">per month</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="goStep(2)">Next: Your travel goals →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: GOALS ── -->
+  <div class="step-panel" id="panel-2">
+    <h1 class="step-heading">What do you want from your cards?</h1>
+    <p class="step-sub">Choose your primary goal. This shapes which programs and card families we prioritize for your stack.</p>
+
+    <div class="goal-grid" id="goalGrid">
+      <div class="goal-card selected" onclick="selectGoal(this,'flights')">
+        <div class="goal-top">
+          <span class="goal-icon">✈️</span>
+          <span class="goal-check">✓</span>
+        </div>
+        <div class="goal-title">Free flights</div>
+        <div class="goal-desc">Maximize transferable points toward premium cabin awards. Best for Chase UR and Amex MR earners.</div>
+      </div>
+      <div class="goal-card" onclick="selectGoal(this,'hotels')">
+        <div class="goal-top">
+          <span class="goal-icon">🏨</span>
+          <span class="goal-check">✓</span>
+        </div>
+        <div class="goal-title">Hotel stays</div>
+        <div class="goal-desc">Earn hotel points and elite status. Best for Hyatt, Marriott, and Hilton loyalists.</div>
+      </div>
+      <div class="goal-card" onclick="selectGoal(this,'flexible')">
+        <div class="goal-top">
+          <span class="goal-icon">🔄</span>
+          <span class="goal-check">✓</span>
+        </div>
+        <div class="goal-title">Maximum flexibility</div>
+        <div class="goal-desc">Earn transferable points redeemable across airlines and hotels. No program lock-in.</div>
+      </div>
+      <div class="goal-card" onclick="selectGoal(this,'cashback')">
+        <div class="goal-top">
+          <span class="goal-icon">💵</span>
+          <span class="goal-check">✓</span>
+        </div>
+        <div class="goal-title">Cash back</div>
+        <div class="goal-desc">Simple, predictable rewards as statement credits or deposits. No redemption strategy required.</div>
+      </div>
+    </div>
+
+    <div class="freq-row">
+      <div class="freq-label">How often do you travel?</div>
+      <div class="freq-options" id="freqOptions">
+        <button class="freq-btn" onclick="selectFreq(this,'rarely')">Rarely</button>
+        <button class="freq-btn selected" onclick="selectFreq(this,'sometimes')">A few times a year</button>
+        <button class="freq-btn" onclick="selectFreq(this,'frequently')">Frequently (5+ trips)</button>
+      </div>
+    </div>
+
+    <div class="intl-row">
+      <div class="freq-label">Do you travel internationally?</div>
+      <div class="toggle-row" id="intlOptions">
+        <button class="toggle-btn selected" onclick="selectIntl(this,'yes')">Yes</button>
+        <button class="toggle-btn" onclick="selectIntl(this,'no')">No, mostly domestic</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <button class="btn-primary" onclick="buildRecommendation()">Build my card stack →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: RESULTS ── -->
+  <div class="step-panel" id="panel-3">
+    <div id="results-content"></div>
+    <button class="restart-btn" onclick="goStep(1)">← Start over with different spending</button>
+  </div>
+
+</div>
+
+<script>
+  // ── STATE ──
+  let selectedGoal = 'flights';
+  let selectedFreq = 'sometimes';
+  let selectedIntl = 'yes';
+
+  // ── CARD DATABASE ──
+  // tpgCpp = cents per point (TPG valuation)
+  // earn = multipliers per category
+  // perkValue = estimated annual perk value
+  // netPerkValue = perk value after backing out what you'd spend anyway
+  const CARDS = {
+    amexGold: {
+      name: 'Amex Gold Card',
+      shortName: 'Amex Gold',
+      issuer: 'American Express',
+      fee: 250,
+      color: ['#c9a84c','#8a6a1e'],
+      program: 'Amex Membership Rewards',
+      tpgCpp: 2.0,
+      earn: { dining: 4, groceries: 4, travel: 3, gas: 1, streaming: 1, other: 1 },
+      perkValue: 240, // $120 dining + $120 Uber Cash
+      goals: ['flights','flexible','hotels'],
+      intl: true,
+      freq: ['sometimes','frequently'],
+      perks: ['$120 annual dining credit', '$120 annual Uber Cash', '4x at US supermarkets (up to $25k/yr)'],
+    },
+    csp: {
+      name: 'Chase Sapphire Preferred',
+      shortName: 'Sapphire Preferred',
+      issuer: 'Chase',
+      fee: 95,
+      color: ['#1e3a6e','#0d2040'],
+      program: 'Chase Ultimate Rewards',
+      tpgCpp: 2.05,
+      earn: { dining: 3, groceries: 1, travel: 2, gas: 1, streaming: 3, other: 1 },
+      perkValue: 50, // $50 hotel credit
+      goals: ['flights','flexible','hotels'],
+      intl: true,
+      freq: ['rarely','sometimes','frequently'],
+      perks: ['$50 annual hotel credit', 'Primary auto rental CDW', 'Trip cancellation insurance'],
+    },
+    csr: {
+      name: 'Chase Sapphire Reserve',
+      shortName: 'Sapphire Reserve',
+      issuer: 'Chase',
+      fee: 550,
+      color: ['#2d2d2d','#1a1a1a'],
+      program: 'Chase Ultimate Rewards',
+      tpgCpp: 2.05,
+      earn: { dining: 3, groceries: 1, travel: 3, gas: 1, streaming: 1, other: 1 },
+      perkValue: 300, // $300 travel credit
+      goals: ['flights','flexible'],
+      intl: true,
+      freq: ['frequently'],
+      perks: ['$300 annual travel credit', 'Priority Pass lounge access', 'Global Entry / TSA PreCheck credit'],
+    },
+    amexPlatinum: {
+      name: 'Amex Platinum Card',
+      shortName: 'Amex Platinum',
+      issuer: 'American Express',
+      fee: 695,
+      color: ['#a8a9ad','#6b6c70'],
+      program: 'Amex Membership Rewards',
+      tpgCpp: 2.0,
+      earn: { dining: 1, groceries: 1, travel: 5, gas: 1, streaming: 1, other: 1 },
+      perkValue: 695, // $200 airline fee + $200 hotel + $240 digital + $155 Walmart+...
+      goals: ['flights','flexible'],
+      intl: true,
+      freq: ['frequently'],
+      perks: ['Centurion & Priority Pass lounge access', '$200 annual airline fee credit', '$200 hotel credit', '$240 digital entertainment credit'],
+    },
+    ventureX: {
+      name: 'Capital One Venture X',
+      shortName: 'Venture X',
+      issuer: 'Capital One',
+      fee: 395,
+      color: ['#c41e3a','#8a1228'],
+      program: 'Capital One Miles',
+      tpgCpp: 1.85,
+      earn: { dining: 2, groceries: 2, travel: 5, gas: 2, streaming: 2, other: 2 },
+      perkValue: 400, // $300 travel credit + 10k anniversary miles
+      goals: ['flights','flexible'],
+      intl: true,
+      freq: ['sometimes','frequently'],
+      perks: ['$300 annual travel credit', '10,000 anniversary bonus miles', 'Priority Pass + Capital One lounge access'],
+    },
+    cfu: {
+      name: 'Chase Freedom Unlimited',
+      shortName: 'Freedom Unlimited',
+      issuer: 'Chase',
+      fee: 0,
+      color: ['#2c5f8a','#1a3d5c'],
+      program: 'Chase Ultimate Rewards',
+      tpgCpp: 2.05,
+      earn: { dining: 3, groceries: 1, travel: 1.5, gas: 1.5, streaming: 1.5, other: 1.5 },
+      perkValue: 0,
+      goals: ['flights','flexible','cashback','hotels'],
+      intl: false,
+      freq: ['rarely','sometimes','frequently'],
+      perks: ['No annual fee', 'Pairs with Sapphire to unlock full UR value', '3% on dining and drug stores'],
+    },
+    aebcp: {
+      name: 'Amex Blue Cash Preferred',
+      shortName: 'Blue Cash Preferred',
+      issuer: 'American Express',
+      fee: 95,
+      color: ['#0060a9','#003d6e'],
+      program: 'Cash Back',
+      tpgCpp: 1.0,
+      earn: { dining: 1, groceries: 6, travel: 1, gas: 3, streaming: 6, other: 1 },
+      perkValue: 84, // $7/mo Disney bundle
+      goals: ['cashback'],
+      intl: false,
+      freq: ['rarely','sometimes','frequently'],
+      perks: ['6% cash back at US supermarkets (up to $6k/yr)', '6% on select US streaming', '$7/mo Disney Bundle credit'],
+    },
+    citiDoubleCash: {
+      name: 'Citi Double Cash Card',
+      shortName: 'Double Cash',
+      issuer: 'Citi',
+      fee: 0,
+      color: ['#003b7a','#001f42'],
+      program: 'Cash Back',
+      tpgCpp: 1.0,
+      earn: { dining: 2, groceries: 2, travel: 2, gas: 2, streaming: 2, other: 2 },
+      perkValue: 0,
+      goals: ['cashback'],
+      intl: false,
+      freq: ['rarely','sometimes','frequently'],
+      perks: ['No annual fee', '2% on everything — 1% when you buy, 1% when you pay', 'Simple, no-category-tracking rewards'],
+    },
+  };
+
+  const CATEGORY_LABELS = {
+    dining: 'Dining', groceries: 'Groceries', travel: 'Travel',
+    gas: 'Gas & Transit', streaming: 'Streaming', other: 'Everything else'
+  };
+
+  // ── STEP NAVIGATION ──
+  function goStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById(`panel-${i}`).classList.toggle('visible', i === n);
+      const ind = document.getElementById(`step-ind-${i}`);
+      ind.classList.toggle('active', i === n);
+      ind.classList.toggle('done', i < n);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectGoal(el, val) {
+    selectedGoal = val;
+    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectFreq(el, val) {
+    selectedFreq = val;
+    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectIntl(el, val) {
+    selectedIntl = val;
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── RECOMMENDATION ENGINE ──
+  function getSpending() {
+    return {
+      dining:     parseFloat(document.getElementById('s-dining').value)    || 0,
+      groceries:  parseFloat(document.getElementById('s-groceries').value) || 0,
+      travel:     parseFloat(document.getElementById('s-travel').value)    || 0,
+      gas:        parseFloat(document.getElementById('s-gas').value)       || 0,
+      streaming:  parseFloat(document.getElementById('s-streaming').value) || 0,
+      other:      parseFloat(document.getElementById('s-other').value)     || 0,
+    };
+  }
+
+  function annualEarnings(card, spending) {
+    let total = 0;
+    for (const [cat, monthly] of Object.entries(spending)) {
+      const rate = card.earn[cat] || 1;
+      total += monthly * 12 * rate * (card.tpgCpp / 100);
+    }
+    return total;
+  }
+
+  function marginalEarnings(card, baseCard, spending) {
+    // How much MORE does adding card to a stack with baseCard earn?
+    let marginal = 0;
+    for (const [cat, monthly] of Object.entries(spending)) {
+      const baseRate = baseCard.earn[cat] || 1;
+      const newRate = card.earn[cat] || 1;
+      if (newRate > baseRate) {
+        marginal += monthly * 12 * (newRate - baseRate) * (card.tpgCpp / 100);
+      }
+    }
+    return marginal;
+  }
+
+  function bestEarnForStack(cards, cat, spending) {
+    let best = { rate: 0, card: null };
+    for (const card of cards) {
+      const rate = card.earn[cat] || 1;
+      if (rate > best.rate) best = { rate, card };
+    }
+    return best;
+  }
+
+  function recommend() {
+    const spending = getSpending();
+    const candidates = Object.entries(CARDS).map(([id, card]) => ({ id, card }));
+
+    // Score each card: gross earnings + perk value - fee
+    const scored = candidates.map(({ id, card }) => {
+      const gross = annualEarnings(card, spending);
+      const net = gross + card.perkValue - card.fee;
+      return { id, card, gross, net };
+    });
+
+    // Filter to goal-compatible cards
+    const goalFiltered = scored.filter(({ card }) => card.goals.includes(selectedGoal));
+
+    // Sort by net value
+    goalFiltered.sort((a, b) => b.net - a.net);
+
+    // Pick card 1: best net value
+    const card1 = goalFiltered[0];
+
+    // Pick card 2: best marginal value on top of card1, net of fee
+    const remaining = goalFiltered.filter(c => c.id !== card1.id);
+    const withMarginal = remaining.map(({ id, card, gross, net }) => {
+      const marginal = marginalEarnings(card, card1.card, spending);
+      return { id, card, marginal, netMarginal: marginal + card.perkValue - card.fee };
+    });
+    withMarginal.sort((a, b) => b.netMarginal - a.netMarginal);
+    const card2 = withMarginal[0];
+
+    // Pick card 3 (optional no-fee complement):
+    const noFeeCards = withMarginal.filter(c => c.card.fee === 0 && c.id !== card2?.id);
+    noFeeCards.sort((a, b) => b.netMarginal - a.netMarginal);
+    const card3 = noFeeCards.length > 0 && noFeeCards[0].netMarginal > 50 ? noFeeCards[0] : null;
+
+    const stack = [card1, card2, card3].filter(Boolean).map(c => ({
+      id: c.id,
+      card: c.card,
+      gross: c.gross || (annualEarnings(c.card, spending)),
+    }));
+
+    return { stack, spending };
+  }
+
+  function whyPicked(card, rank, goal, spending) {
+    const cats = Object.entries(card.earn)
+      .filter(([, r]) => r >= 3)
+      .map(([c]) => CATEGORY_LABELS[c].toLowerCase());
+
+    if (rank === 0) {
+      if (cats.length > 0) return `Your #1 earner — ${card.tpgCpp}¢/pt on ${card.program} points, with top multipliers on ${cats.slice(0,2).join(' and ')}.`;
+      return `Your primary card — strong flat-rate earning on all purchases with ${card.program}.`;
+    }
+    if (rank === 1) {
+      if (cats.length > 0) return `Fills the gaps in your stack — high earn rates on ${cats.slice(0,2).join(' and ')} where card 1 earns less.`;
+      return `Boosts your stack's coverage with broad earning across categories your primary card doesn't maximize.`;
+    }
+    return `No-fee complement — earns ${card.earn.other}x on everything else, strengthening your stack at no extra cost.`;
+  }
+
+  function buildRecommendation() {
+    const { stack, spending } = recommend();
+    goStep(3);
+
+    const totalGross = stack.reduce((s, { card }) => s + annualEarnings(card, spending) + card.perkValue, 0);
+    const totalFees = stack.reduce((s, { card }) => s + card.fee, 0);
+    const totalNet = totalGross - totalFees;
+
+    // Coverage analysis
+    const cats = Object.keys(spending);
+    const coverage = cats.map(cat => {
+      const best = Math.max(...stack.map(({ card }) => card.earn[cat] || 1));
+      return { cat, rate: best };
+    });
+
+    const html = `
+      <h1 class="step-heading" style="margin-bottom:6px">Your recommended card stack</h1>
+      <p class="step-sub" style="margin-bottom:20px">Based on your spending and goals, here's the combination that maximizes your annual value.
+        <span class="dd-marker">i<span class="dd-tooltip">Card data — earn rates, fees, perk values — is managed as structured content in the Sanity CMS. Updates to any card's terms flow through to this tool automatically, with no code changes required.</span></span>
+        <span class="sanity-badge" style="margin-left:6px"><span class="sanity-dot"></span>Sanity</span>
+      </p>
+
+      <div class="results-summary">
+        <div class="summary-label">Estimated annual value</div>
+        <div class="summary-value-row">
+          <div class="summary-big">$${Math.round(totalGross).toLocaleString()} <span>gross rewards</span></div>
+          <div class="summary-net">After fees: <strong>$${Math.round(totalNet).toLocaleString()} net</strong></div>
+        </div>
+        <div class="summary-label" style="margin-bottom:8px">Category coverage</div>
+        <div class="coverage-row">
+          ${coverage.map(({ cat, rate }) => {
+            const cls = rate >= 4 ? 'covered' : rate >= 2 ? 'partial' : 'uncovered';
+            const icon = rate >= 4 ? '✓' : rate >= 2 ? '~' : '○';
+            return `<span class="cov-chip ${cls}">${icon} ${CATEGORY_LABELS[cat]} (${rate}x)</span>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="card-stack">
+        <div class="stack-label">Your ${stack.length}-card stack</div>
+        ${stack.map(({ card }, i) => {
+          const cats = Object.entries(CATEGORY_LABELS);
+          const annualByCategory = cats.map(([key, label]) => ({
+            key, label,
+            rate: card.earn[key] || 1,
+            annual: ((spending[key] || 0) * 12 * (card.earn[key] || 1) * card.tpgCpp / 100),
+          }));
+          const maxEarn = Math.max(...annualByCategory.map(c => c.annual));
+          const grossAnnual = annualEarnings(card, spending);
+
+          return `
+            <div class="rec-card">
+              <div class="rec-card-header">
+                <div class="card-art" style="background:linear-gradient(135deg,${card.color[0]},${card.color[1]})">
+                  <span class="card-art-name">${card.shortName}</span>
+                </div>
+                <div class="rec-card-info">
+                  <div class="rec-card-name">Card ${i+1}: ${card.name}</div>
+                  <div class="rec-card-issuer">${card.issuer} · ${card.program}</div>
+                  <div class="rec-card-why">${whyPicked(card, i, selectedGoal, spending)}</div>
+                </div>
+              </div>
+              <div class="rec-card-meta">
+                <span class="meta-item">Annual fee: <strong>${card.fee === 0 ? 'None' : '$'+card.fee}</strong></span>
+                <span class="meta-sep">·</span>
+                <span class="meta-item">Est. gross earnings: <strong>$${Math.round(grossAnnual).toLocaleString()}/yr</strong></span>
+                <span class="meta-sep">·</span>
+                <span class="meta-item">Perks value: <strong>~$${card.perkValue}/yr</strong></span>
+              </div>
+              <table class="earn-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Earn rate</th>
+                    <th>Est. annual value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${annualByCategory
+                    .filter(c => (spending[c.key] || 0) > 0)
+                    .sort((a,b) => b.annual - a.annual)
+                    .map(c => {
+                      const pct = maxEarn > 0 ? (c.annual / maxEarn * 100) : 0;
+                      const isTop = c.rate >= 3;
+                      return `
+                        <tr class="${isTop ? 'highlight-row' : ''}">
+                          <td>${c.label}</td>
+                          <td>
+                            <div class="earn-bar-wrap">
+                              <span class="earn-rate ${isTop ? 'top' : ''}">${c.rate}x</span>
+                              <div class="earn-bar"><div class="earn-bar-fill" style="width:${pct}%"></div></div>
+                            </div>
+                          </td>
+                          <td class="earn-annual">$${Math.round(c.annual).toLocaleString()}</td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+              </table>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <div class="breakdown-section">
+        <div class="breakdown-header">
+          How your stack earns — best card per category
+          <span class="dd-marker">i<span class="dd-tooltip">This table shows which card in your stack to use for each purchase category to maximize your points rate.</span></span>
+        </div>
+        <table class="breakdown-table">
+          <thead>
+            <tr><th>Category</th><th>Use this card</th><th>Earn rate</th><th>Est. annual value</th></tr>
+          </thead>
+          <tbody>
+            ${Object.entries(CATEGORY_LABELS).filter(([k]) => (spending[k]||0) > 0).map(([key, label]) => {
+              const best = stack.reduce((b, { card }) => {
+                const rate = card.earn[key] || 1;
+                return rate > b.rate ? { rate, card } : b;
+              }, { rate: 0, card: null });
+              const annualVal = (spending[key] || 0) * 12 * best.rate * (best.card.tpgCpp / 100);
+              return `
+                <tr>
+                  <td>${label}</td>
+                  <td>
+                    <span class="best-card-badge" style="background:${best.card.color[0]}">
+                      ${best.card.shortName}
+                    </span>
+                  </td>
+                  <td><strong>${best.rate}x</strong> ${best.card.tpgCpp}¢/pt</td>
+                  <td>$${Math.round(annualVal).toLocaleString()}</td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      ${stack.map(({ card }) => `
+        <div class="apply-section">
+          <div class="apply-text">
+            <div class="apply-title">${card.name}</div>
+            <div class="apply-sub">Annual fee: ${card.fee === 0 ? 'None' : '$'+card.fee+'/yr'} · ${card.program}</div>
+          </div>
+          <button class="apply-btn">Apply now →</button>
+        </div>`).join('')}
+
+      <div class="footnote">
+        Estimated values are based on TPG's monthly point valuations and your entered monthly spend.
+        Actual earnings will vary. Welcome bonuses not included in estimates.
+        Card terms, earn rates, and benefits sourced from the TPG CMS — <span class="sanity-badge"><span class="sanity-dot"></span>Sanity</span> — and updated when issuers change terms.
+      </div>
+    `;
+
+    document.getElementById('results-content').innerHTML = html;
+  }
+</script>
+
+</body>
+</html>

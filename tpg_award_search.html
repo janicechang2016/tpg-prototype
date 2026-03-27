@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPG Award Search — Flight Award Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    /* ── NAV ── */
+    .tpg-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tpg-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+    .tpg-nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+    }
+    .tpg-nav-links li { cursor: pointer; }
+    .tpg-nav-links li:hover { color: #C41E3A; }
+    .tpg-nav-links li.active { color: #C41E3A; font-weight: 600; }
+    .proto-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #fff4f0;
+      color: #C41E3A;
+      border: 1px solid #f5c6bc;
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    /* ── HERO SEARCH BAR ── */
+    .search-hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 24px 32px 20px;
+    }
+    .search-hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .search-hero-sub {
+      font-size: 12.5px;
+      color: #777;
+      margin-bottom: 18px;
+    }
+    .search-hero-sub span {
+      color: #C41E3A;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .search-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .search-field label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #888;
+    }
+    .search-field input, .search-field select {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      outline: none;
+      height: 38px;
+    }
+    .search-field input:focus, .search-field select:focus { border-color: #C41E3A; }
+    .search-field.wide input { width: 160px; }
+    .search-field.med input, .search-field.med select { width: 130px; }
+    .search-field.narrow select { width: 110px; }
+
+    .search-btn {
+      height: 38px;
+      padding: 0 22px;
+      background: #C41E3A;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .search-btn:hover { opacity: 0.88; }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      gap: 24px;
+    }
+
+    /* ── FILTER SIDEBAR ── */
+    .filters {
+      background: #ffffff;
+      border: 1px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 18px;
+      height: fit-content;
+      position: sticky;
+      top: 76px;
+    }
+    .filter-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 14px;
+    }
+    .filter-group { margin-bottom: 20px; }
+    .filter-group-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-clear {
+      font-size: 10px;
+      color: #C41E3A;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      cursor: pointer;
+    }
+    .filter-option input[type="checkbox"] {
+      accent-color: #C41E3A;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+    .filter-option label {
+      font-size: 12.5px;
+      color: #444;
+      cursor: pointer;
+      flex: 1;
+    }
+    .filter-option .filter-count {
+      font-size: 10.5px;
+      color: #aaa;
+    }
+
+    .filter-divider {
+      border: none;
+      border-top: 1px solid #ece9e2;
+      margin: 16px 0;
+    }
+
+    .value-toggle {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .value-chip {
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all 0.12s;
+      color: #555;
+    }
+    .value-chip:hover { border-color: #C41E3A; color: #C41E3A; }
+    .value-chip.active {
+      background: #fde8ea;
+      border-color: #C41E3A;
+      color: #C41E3A;
+      font-weight: 600;
+    }
+
+    .points-range {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .points-range input[type="range"] {
+      accent-color: #C41E3A;
+      width: 100%;
+    }
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #888;
+    }
+
+    /* ── RESULTS ── */
+    .results-col { min-width: 0; }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .results-count {
+      font-size: 13px;
+      color: #555;
+    }
+    .results-count strong { color: #1a1a1a; }
+
+    .sort-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #888;
+    }
+    .sort-row select {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      color: #333;
+      outline: none;
+      background: #fff;
+    }
+    .sort-row select:focus { border-color: #C41E3A; }
+
+    /* TPG value callout bar */
+    .value-callout {
+      background: #fff8f0;
+      border: 1px solid #f5dfc0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #7a4f1a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .value-callout svg { flex-shrink: 0; }
+
+    /* Result cards */
+    .result-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .result-card:hover {
+      border-color: #C41E3A;
+      box-shadow: 0 2px 12px rgba(196,30,58,0.07);
+    }
+    .result-card.best-value {
+      border-left: 3px solid #27ae60;
+    }
+    .result-card.poor-value {
+      border-left: 3px solid #e0ddd6;
+      opacity: 0.85;
+    }
+
+    .card-left { min-width: 0; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .airline-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: white;
+    }
+    .airline-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .program-name {
+      font-size: 11.5px;
+      color: #777;
+    }
+
+    .route-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .airport-code {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+    .route-line {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 160px;
+    }
+    .route-dash {
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+    .route-plane {
+      font-size: 14px;
+    }
+    .route-detail {
+      font-size: 11px;
+      color: #999;
+    }
+    .city-names {
+      font-size: 11.5px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .city-names .arrow { color: #ccc; margin: 0 4px; }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid #e8e5de;
+      color: #666;
+      background: #faf9f7;
+    }
+    .tag.cabin-f { border-color: #d4b896; color: #7a5c2e; background: #fdf7f0; }
+    .tag.cabin-j { border-color: #b8c8e0; color: #2a4a6e; background: #f0f4fa; }
+    .tag.cabin-y { border-color: #e0ddd6; color: #666; }
+    .tag.avail { border-color: #a3d9b8; color: #1a6b3a; background: #eafaf1; }
+    .tag.avail-low { border-color: #f5c6bc; color: #8b2a1a; background: #fff4f0; }
+    .tag.transfer { border-color: #c8b8e0; color: #4a2a6e; background: #f4f0fa; }
+
+    /* Right column — points + value */
+    .card-right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 140px;
+    }
+    .points-cost {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .points-label {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .cash-label {
+      font-size: 11.5px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    .value-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .value-badge.great {
+      background: #eafaf1;
+      color: #1a7c45;
+      border: 1px solid #a3d9b8;
+    }
+    .value-badge.good {
+      background: #eaf3fa;
+      color: #1a4a7c;
+      border: 1px solid #a3c8d9;
+    }
+    .value-badge.fair {
+      background: #fff8f0;
+      color: #7a5c1a;
+      border: 1px solid #f5dfc0;
+    }
+    .value-badge.poor {
+      background: #faf9f7;
+      color: #888;
+      border: 1px solid #e0ddd6;
+    }
+    .cpp-line {
+      font-size: 10.5px;
+      color: #aaa;
+      margin-bottom: 12px;
+    }
+    .cpp-line strong { color: #555; }
+
+    .book-btn {
+      display: block;
+      width: 100%;
+      padding: 8px 0;
+      background: #C41E3A;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      text-align: center;
+    }
+    .book-btn:hover { opacity: 0.88; }
+    .book-btn.secondary {
+      background: #fff;
+      color: #C41E3A;
+      border: 1.5px solid #C41E3A;
+    }
+    .book-btn.secondary:hover { background: #fde8ea; }
+
+    /* No results state */
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+    .no-results svg { margin-bottom: 12px; opacity: 0.3; }
+    .no-results h3 { font-size: 16px; color: #444; margin-bottom: 6px; }
+    .no-results p { font-size: 13px; }
+
+    /* Future iteration note */
+    .future-note {
+      background: #f7f6f3;
+      border: 1px solid #e8e5de;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #777;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .future-note strong { color: #444; }
+
+    /* Design decision tooltip */
+    .dd-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #e8e5de;
+      color: #888;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+    .dd-marker:hover .dd-tooltip {
+      display: block;
+    }
+    .dd-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 11px;
+      line-height: 1.5;
+      padding: 8px 12px;
+      border-radius: 7px;
+      white-space: nowrap;
+      max-width: 220px;
+      white-space: normal;
+      z-index: 200;
+      font-weight: 400;
+      pointer-events: none;
+    }
+    .dd-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #1a1a1a;
+    }
+
+    /* Sanity badge */
+    .sanity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #f0f4fa;
+      color: #2a4a8e;
+      border: 1px solid #c0cce8;
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+    .sanity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #e05c30;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .main { grid-template-columns: 1fr; padding: 16px; }
+      .filters { position: static; }
+      .search-bar { gap: 8px; }
+      .search-field.wide input, .search-field.med input,
+      .search-field.med select, .search-field.narrow select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<header class="tpg-header">
+  <span class="tpg-logo">The Points Guy</span>
+  <ul class="tpg-nav-links">
+    <li>News</li>
+    <li>Reviews</li>
+    <li>Guides</li>
+    <li>Deals</li>
+    <li class="active">Tools</li>
+    <li>Credit Cards</li>
+  </ul>
+  <span class="proto-badge">Prototype</span>
+</header>
+
+<!-- ── SEARCH HERO ── -->
+<div class="search-hero">
+  <h1 class="search-hero-title">
+    Award Flight Search
+    <span class="dd-marker">i
+      <span class="dd-tooltip">TPG currently links readers to third-party tools like Seats.aero and ExpertFlyer. This prototype explores what a native, TPG-branded award search experience would look like — with TPG valuations overlaid on every result.</span>
+    </span>
+  </h1>
+  <div class="search-hero-sub">
+    Search award availability across all major programs. TPG valuations applied automatically.
+    <span>Hotel awards →</span> &nbsp;(coming soon)
+  </div>
+
+  <div class="search-bar">
+    <div class="search-field wide">
+      <label>From</label>
+      <input type="text" value="New York (JFK/EWR/LGA)" id="origin" />
+    </div>
+    <div class="search-field wide">
+      <label>To</label>
+      <input type="text" value="Tokyo (NRT/HND)" id="dest" />
+    </div>
+    <div class="search-field med">
+      <label>Depart</label>
+      <input type="text" value="Jun 15, 2026" id="depart" />
+    </div>
+    <div class="search-field med">
+      <label>Return</label>
+      <input type="text" value="Jun 28, 2026" id="return" />
+    </div>
+    <div class="search-field narrow">
+      <label>Cabin</label>
+      <select id="cabin">
+        <option>All cabins</option>
+        <option>First class</option>
+        <option selected>Business</option>
+        <option>Economy</option>
+      </select>
+    </div>
+    <button class="search-btn" onclick="renderResults()">Search awards</button>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- FILTERS -->
+  <aside class="filters">
+    <div class="filter-title">Filter results</div>
+
+    <div class="filter-group">
+      <div class="filter-group-label">
+        Loyalty program
+        <span class="filter-clear" onclick="clearGroup('program')">Clear</span>
+      </div>
+      <div class="filter-option"><input type="checkbox" id="f-ua" checked onchange="applyFilters()"><label for="f-ua">United MileagePlus</label><span class="filter-count">4</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-ac" checked onchange="applyFilters()"><label for="f-ac">Air Canada Aeroplan</label><span class="filter-count">3</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-dl" checked onchange="applyFilters()"><label for="f-dl">Delta SkyMiles</label><span class="filter-count">2</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-sq" checked onchange="applyFilters()"><label for="f-sq">Singapore KrisFlyer</label><span class="filter-count">2</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-aa" checked onchange="applyFilters()"><label for="f-aa">ANA Mileage Club</label><span class="filter-count">2</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-jl" checked onchange="applyFilters()"><label for="f-jl">Japan Airlines Mileage</label><span class="filter-count">1</span></div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <div class="filter-group-label">
+        TPG value rating
+        <span class="dd-marker">i
+          <span class="dd-tooltip">TPG values each program's points in cents. "Great value" = redemption exceeds TPG's published valuation by 20%+.</span>
+        </span>
+      </div>
+      <div class="value-toggle">
+        <span class="value-chip active" onclick="toggleChip(this)" data-val="great">Great</span>
+        <span class="value-chip active" onclick="toggleChip(this)" data-val="good">Good</span>
+        <span class="value-chip active" onclick="toggleChip(this)" data-val="fair">Fair</span>
+        <span class="value-chip" onclick="toggleChip(this)" data-val="poor">Poor</span>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <div class="filter-group-label">Cabin class</div>
+      <div class="filter-option"><input type="checkbox" id="f-first" checked onchange="applyFilters()"><label for="f-first">First class</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-biz" checked onchange="applyFilters()"><label for="f-biz">Business class</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-eco" onchange="applyFilters()"><label for="f-eco">Economy</label></div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <div class="filter-group-label">Max points cost</div>
+      <div class="points-range">
+        <input type="range" min="0" max="200" value="200" id="maxPoints" oninput="updateRange(this)" />
+        <div class="range-labels">
+          <span>0k</span>
+          <span id="rangeVal">Any</span>
+          <span>200k+</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <div class="filter-group-label">Transfer partners only
+        <span class="dd-marker">i
+          <span class="dd-tooltip">Show only awards bookable via Chase, Amex, or Citi transfer partners — letting you use flexible points currencies.</span>
+        </span>
+      </div>
+      <div class="filter-option"><input type="checkbox" id="f-transfer" onchange="applyFilters()"><label for="f-transfer">Chase Ultimate Rewards</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-amex" onchange="applyFilters()"><label for="f-amex">Amex Membership Rewards</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-citi" onchange="applyFilters()"><label for="f-citi">Citi ThankYou Points</label></div>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <div class="results-col">
+
+    <div class="results-header">
+      <div class="results-count" id="resultCount"><strong>14 results</strong> — New York → Tokyo · Business &amp; First · Jun 2026</div>
+      <div class="sort-row">
+        Sort:
+        <select id="sortBy" onchange="applyFilters()">
+          <option value="value">Best value</option>
+          <option value="points">Lowest points</option>
+          <option value="cpp">Highest ¢/point</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="value-callout">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c47a1a" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>TPG valuations shown are based on <strong>February 2026 monthly valuations</strong>. Redemption value may vary with routing and partner availability.
+        <span class="dd-marker">i
+          <span class="dd-tooltip">In production, these valuations are pulled live from the Sanity CMS — the same dataset that powers TPG's monthly valuations article. No hardcoding required.</span>
+        </span>
+      </span>
+    </div>
+
+    <div id="results-list"></div>
+
+    <div class="future-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <div>
+        <strong>Hotel awards coming soon.</strong> The same search and valuation overlay will apply to Hyatt, Marriott Bonvoy, and Hilton Honors. Award availability and TPG valuations are managed as structured content in the CMS — <span class="sanity-badge"><span class="sanity-dot"></span>Sanity</span> — making hotel award support a schema extension, not a rebuild.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const PROGRAMS = {
+    ua:  { name: 'United MileagePlus',      airline: 'United Airlines',        code: 'UA', color: '#003580', tpgCpp: 1.35, transfers: ['chase'] },
+    ac:  { name: 'Air Canada Aeroplan',     airline: 'Air Canada',             code: 'AC', color: '#c8102e', tpgCpp: 1.55, transfers: ['chase','amex','citi'] },
+    dl:  { name: 'Delta SkyMiles',          airline: 'Delta Air Lines',        code: 'DL', color: '#c01933', tpgCpp: 1.20, transfers: ['amex'] },
+    sq:  { name: 'Singapore KrisFlyer',     airline: 'Singapore Airlines',     code: 'SQ', color: '#0a3a7a', tpgCpp: 1.30, transfers: ['amex','citi'] },
+    ana: { name: 'ANA Mileage Club',        airline: 'All Nippon Airways',     code: 'NH', color: '#0b3d7e', tpgCpp: 1.55, transfers: ['amex'] },
+    jal: { name: 'Japan Airlines Mileage',  airline: 'Japan Airlines',         code: 'JL', color: '#cc0033', tpgCpp: 1.40, transfers: ['amex'] },
+  };
+
+  const ALL_RESULTS = [
+    // ANA — First Class (ANA The Room)
+    { id:1, program:'ana', cabin:'First',    points:110000, taxes:35,  stops:'Nonstop', duration:'14h 05m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'low',  note:'ANA The Room suite — one of the best first class products in the world' },
+    // Aeroplan — Business
+    { id:2, program:'ac',  cabin:'Business', points:75000,  taxes:110, stops:'Nonstop', duration:'14h 10m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'high', note:'Star Alliance Business on ANA — lie-flat, direct aisle access' },
+    // ANA — Business
+    { id:3, program:'ana', cabin:'Business', points:88000,  taxes:40,  stops:'Nonstop', duration:'14h 05m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'high', note:'Book ANA direct using ANA miles — avoid fuel surcharges' },
+    // United — Business (Polaris)
+    { id:4, program:'ua',  cabin:'Business', points:88000,  taxes:89,  stops:'Nonstop', duration:'14h 05m', segments:'EWR → NRT', cities:'Newark → Tokyo Narita',    avail:'high', note:'United Polaris on ANA metal — same hard product, higher redemption rate' },
+    // Singapore — Business (via SIN)
+    { id:5, program:'sq',  cabin:'Business', points:93750,  taxes:380, stops:'1 stop',  duration:'21h 30m', segments:'JFK → SIN → NRT', cities:'New York → Singapore → Tokyo', avail:'high', note:'Singapore Suites or Business via Singapore — high surcharges' },
+    // Aeroplan — First Class
+    { id:6, program:'ac',  cabin:'First',    points:95000,  taxes:110, stops:'Nonstop', duration:'14h 10m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'low',  note:'ANA First via Aeroplan — outstanding sweet spot, no fuel surcharges' },
+    // JAL — Business (via LAX)
+    { id:7, program:'jal', cabin:'Business', points:80000,  taxes:290, stops:'1 stop',  duration:'18h 45m', segments:'JFK → LAX → NRT', cities:'New York → Los Angeles → Tokyo', avail:'high', note:'JAL Business Class Suite — high surcharges apply' },
+    // Delta — Business (via SEA)
+    { id:8, program:'dl',  cabin:'Business', points:270000, taxes:5,   stops:'1 stop',  duration:'17h 20m', segments:'JFK → SEA → NRT', cities:'New York → Seattle → Tokyo', avail:'high', note:'Delta SkyMiles — dynamic pricing, often poor value on premium routes' },
+    // United — First
+    { id:9, program:'ua',  cabin:'First',    points:160000, taxes:89,  stops:'Nonstop', duration:'14h 05m', segments:'EWR → NRT', cities:'Newark → Tokyo Narita',    avail:'low',  note:'United Polaris First (if available) — rare, verify at time of booking' },
+    // Aeroplan — Economy
+    { id:10, program:'ac', cabin:'Economy',  points:30000,  taxes:110, stops:'Nonstop', duration:'14h 10m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'high', note:'Economy option — strong value vs. paying cash for TPY' },
+    // United — Economy
+    { id:11, program:'ua', cabin:'Economy',  points:35000,  taxes:89,  stops:'Nonstop', duration:'14h 05m', segments:'EWR → NRT', cities:'Newark → Tokyo Narita',    avail:'high', note:'Saver economy on ANA — decent value for cash economy prices' },
+    // Singapore — First (Suites)
+    { id:12, program:'sq', cabin:'First',    points:172500, taxes:520, stops:'1 stop',  duration:'22h 00m', segments:'JFK → SIN → NRT', cities:'New York → Singapore → Tokyo', avail:'low', note:'Singapore Suites via SIN — the best first class in the world, but high surcharges' },
+    // ANA — Economy
+    { id:13, program:'ana', cabin:'Economy', points:45000,  taxes:40,  stops:'Nonstop', duration:'14h 05m', segments:'JFK → NRT', cities:'New York → Tokyo Narita',  avail:'high', note:'ANA economy on own metal — book direct via ANA for best availability' },
+    // Delta — Economy
+    { id:14, program:'dl', cabin:'Economy',  points:150000, taxes:5,   stops:'1 stop',  duration:'16h 50m', segments:'JFK → SEA → NRT', cities:'New York → Seattle → Tokyo', avail:'high', note:'Delta dynamic pricing on international economy — almost always poor value' },
+  ];
+
+  function calcCpp(result) {
+    const prog = PROGRAMS[result.program];
+    // cash equivalent: rough reference prices
+    const cashPrices = { 'First': 12000, 'Business': 4800, 'Economy': 900 };
+    const cashVal = cashPrices[result.cabin] - result.taxes;
+    return (cashVal / result.points) * 100;
+  }
+
+  function valueRating(cpp, tpgCpp) {
+    const ratio = cpp / tpgCpp;
+    if (ratio >= 1.4) return 'great';
+    if (ratio >= 1.0) return 'good';
+    if (ratio >= 0.7) return 'fair';
+    return 'poor';
+  }
+
+  function valueLabel(rating) {
+    return { great: '★ Great value', good: '✓ Good value', fair: '~ Fair value', poor: '✗ Poor value' }[rating];
+  }
+
+  function airlineInitials(code) {
+    return code;
+  }
+
+  let activeValueFilters = new Set(['great','good','fair']);
+
+  function toggleChip(el) {
+    const val = el.dataset.val;
+    if (activeValueFilters.has(val)) {
+      activeValueFilters.delete(val);
+      el.classList.remove('active');
+    } else {
+      activeValueFilters.add(val);
+      el.classList.add('active');
+    }
+    applyFilters();
+  }
+
+  function clearGroup(group) {
+    if (group === 'program') {
+      ['f-ua','f-ac','f-dl','f-sq','f-aa','f-jl'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = false;
+      });
+      applyFilters();
+    }
+  }
+
+  function updateRange(el) {
+    const val = parseInt(el.value);
+    document.getElementById('rangeVal').textContent = val >= 200 ? 'Any' : val + 'k';
+    applyFilters();
+  }
+
+  const programMap = { 'f-ua':'ua','f-ac':'ac','f-dl':'dl','f-sq':'sq','f-aa':'ana','f-jl':'jal' };
+  const cabinMap = { 'f-first':'First','f-biz':'Business','f-eco':'Economy' };
+  const transferMap = { 'f-transfer':'chase','f-amex':'amex','f-citi':'citi' };
+
+  function applyFilters() {
+    const activePrograms = new Set(
+      Object.entries(programMap).filter(([id]) => document.getElementById(id)?.checked).map(([,v])=>v)
+    );
+    const activeCabins = new Set(
+      Object.entries(cabinMap).filter(([id]) => document.getElementById(id)?.checked).map(([,v])=>v)
+    );
+    const activeTransfers = new Set(
+      Object.entries(transferMap).filter(([id]) => document.getElementById(id)?.checked).map(([,v])=>v)
+    );
+    const transferOnly = activeTransfers.size > 0;
+    const maxPts = parseInt(document.getElementById('maxPoints').value);
+
+    let filtered = ALL_RESULTS.filter(r => {
+      if (!activePrograms.has(r.program)) return false;
+      if (!activeCabins.has(r.cabin)) return false;
+      if (r.points/1000 > maxPts && maxPts < 200) return false;
+      const cpp = calcCpp(r);
+      const rating = valueRating(cpp, PROGRAMS[r.program].tpgCpp);
+      if (!activeValueFilters.has(rating)) return false;
+      if (transferOnly) {
+        const prog = PROGRAMS[r.program];
+        const hasTransfer = prog.transfers.some(t => activeTransfers.has(t));
+        if (!hasTransfer) return false;
+      }
+      return true;
+    });
+
+    const sortBy = document.getElementById('sortBy').value;
+    filtered.sort((a, b) => {
+      if (sortBy === 'points') return a.points - b.points;
+      if (sortBy === 'cpp') return calcCpp(b) - calcCpp(a);
+      // best value: sort by cpp/tpgCpp ratio desc
+      const ratioA = calcCpp(a) / PROGRAMS[a.program].tpgCpp;
+      const ratioB = calcCpp(b) / PROGRAMS[b.program].tpgCpp;
+      return ratioB - ratioA;
+    });
+
+    renderCards(filtered);
+  }
+
+  function renderCards(results) {
+    const list = document.getElementById('results-list');
+    const countEl = document.getElementById('resultCount');
+    const cabin = document.getElementById('cabin').value;
+    countEl.innerHTML = `<strong>${results.length} result${results.length !== 1 ? 's' : ''}</strong> — New York → Tokyo · ${cabin} · Jun 2026`;
+
+    if (results.length === 0) {
+      list.innerHTML = `
+        <div class="no-results">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <h3>No results match your filters</h3>
+          <p>Try adjusting your program selection, cabin class, or value rating filters.</p>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = results.map(r => {
+      const prog = PROGRAMS[r.program];
+      const cpp = calcCpp(r);
+      const rating = valueRating(cpp, prog.tpgCpp);
+      const label = valueLabel(rating);
+      const cppFormatted = cpp.toFixed(2);
+      const cabinClass = r.cabin === 'First' ? 'cabin-f' : r.cabin === 'Business' ? 'cabin-j' : 'cabin-y';
+      const availClass = r.avail === 'high' ? 'avail' : 'avail-low';
+      const availText = r.avail === 'high' ? 'Seats available' : 'Limited seats';
+      const transferBadges = prog.transfers.map(t => {
+        const names = { chase:'Chase UR', amex:'Amex MR', citi:'Citi TY' };
+        return `<span class="tag transfer">${names[t]}</span>`;
+      }).join('');
+      const cardClass = rating === 'poor' ? 'poor-value' : rating === 'great' || rating === 'good' ? 'best-value' : '';
+
+      return `
+        <div class="result-card ${cardClass}">
+          <div class="card-left">
+            <div class="card-top">
+              <div class="airline-logo" style="background:${prog.color}">${prog.code}</div>
+              <div>
+                <div class="airline-name">${prog.airline}</div>
+                <div class="program-name">${prog.name}</div>
+              </div>
+            </div>
+            <div class="route-row">
+              <span class="airport-code">${r.segments.split(' → ')[0]}</span>
+              <div class="route-line">
+                <div class="route-dash"></div>
+                <span class="route-plane">✈</span>
+                <div class="route-dash"></div>
+              </div>
+              <span class="airport-code">${r.segments.split(' → ').slice(-1)[0]}</span>
+              <span class="route-detail">&nbsp;${r.duration} · ${r.stops}</span>
+            </div>
+            <div class="city-names">${r.cities.replace(' → ', '<span class="arrow">→</span>')}</div>
+            <div class="card-tags">
+              <span class="tag ${cabinClass}">${r.cabin} class</span>
+              <span class="tag ${availClass}">${availText}</span>
+              ${transferBadges}
+            </div>
+            <div style="font-size:11px;color:#999;margin-top:8px;">${r.note}</div>
+          </div>
+          <div class="card-right">
+            <div class="points-cost">${(r.points/1000).toFixed(0)}k</div>
+            <div class="points-label">points + $${r.taxes} taxes</div>
+            <div class="value-badge ${rating}">${label}</div>
+            <div class="cpp-line"><strong>${cppFormatted}¢/pt</strong> · TPG values at ${prog.tpgCpp}¢</div>
+            <button class="book-btn">Book on ${prog.code}</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderResults() {
+    applyFilters();
+  }
+
+  // Initial render
+  renderResults();
+</script>
+
+</body>
+</html>

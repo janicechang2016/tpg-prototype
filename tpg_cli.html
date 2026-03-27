@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPG CMS CLI — Editorial AI Tooling</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    /* ── NAV ── */
+    .tpg-header {
+      background: #fff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tpg-logo { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #1a1a1a; }
+    .tpg-nav-links { display: flex; gap: 20px; list-style: none; font-size: 12px; font-weight: 500; color: #555; }
+    .tpg-nav-links li { cursor: pointer; }
+    .tpg-nav-links li:hover, .tpg-nav-links li.active { color: #C41E3A; }
+    .tpg-nav-links li.active { font-weight: 600; }
+    .proto-badge {
+      margin-left: auto;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      background: #fff4f0; color: #C41E3A; border: 1px solid #f5c6bc;
+      border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 28px 32px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .page-sub { font-size: 13px; color: #777; max-width: 480px; line-height: 1.5; }
+
+    .pkg-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11.5px; font-weight: 600;
+      background: #1a1a1a; color: #4ade80;
+      border-radius: 8px; padding: 6px 12px;
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+      padding: 20px 32px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    .section-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #aaa; margin-bottom: 10px;
+    }
+
+    /* Command cards */
+    .cmd-card {
+      background: #fff;
+      border: 2px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      user-select: none;
+    }
+    .cmd-card:hover { border-color: #C41E3A; box-shadow: 0 2px 8px rgba(196,30,58,0.08); }
+    .cmd-card.active { border-color: #C41E3A; background: #fff8f8; }
+    .cmd-card.running { border-color: #4ade80; }
+
+    .cmd-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px; font-weight: 500;
+      color: #1a1a1a; margin-bottom: 5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cmd-prompt { color: #C41E3A; }
+    .cmd-name { color: #1a1a1a; }
+    .cmd-args { color: #888; }
+    .cmd-desc { font-size: 11.5px; color: #777; line-height: 1.4; margin-bottom: 8px; }
+    .cmd-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .cmd-tag {
+      font-size: 10px; padding: 2px 7px;
+      border-radius: 20px; background: #f5f5f0;
+      color: #666; border: 1px solid #e0ddd6;
+    }
+    .cmd-tag.sanity { background: rgba(224,92,48,0.08); color: #e05c30; border-color: rgba(224,92,48,0.2); }
+    .cmd-tag.claude { background: rgba(196,30,58,0.06); color: #C41E3A; border-color: rgba(196,30,58,0.2); }
+    .cmd-tag.dashboard { background: #eaf3fa; color: #1a3a6b; border-color: #b8d0e8; }
+
+    .run-hint {
+      font-size: 10px; color: #C41E3A; font-weight: 600; margin-top: 6px;
+      display: none;
+    }
+    .cmd-card:hover .run-hint { display: block; }
+    .cmd-card.active .run-hint { display: block; }
+
+    /* Dashboard overlap callout */
+    .overlap-callout {
+      background: #eaf3fa;
+      border: 1px solid #b8d0e8;
+      border-left: 3px solid #1a3a6b;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 14px;
+    }
+    .overlap-title { font-size: 11.5px; font-weight: 700; color: #1a3a6b; margin-bottom: 4px; }
+    .overlap-desc { font-size: 11px; color: #4a6080; line-height: 1.5; }
+
+    /* Architecture panel */
+    .arch-panel {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .arch-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #666; margin-bottom: 12px;
+    }
+    .arch-flow { display: flex; flex-direction: column; gap: 0; }
+    .arch-node {
+      background: #242424;
+      border: 1px solid #2a2a2a;
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 11.5px;
+    }
+    .arch-node-label { color: #aaa; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .arch-node-val { color: #fff; font-family: 'DM Mono', monospace; font-size: 12px; }
+    .arch-node-val span { color: #4ade80; }
+    .arch-arrow {
+      text-align: center; color: #444; font-size: 12px; padding: 3px 0;
+    }
+    .arch-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 3px 0;
+    }
+    .arch-node.claude-node .arch-node-val span { color: #f87171; }
+    .arch-node.sanity-node .arch-node-val span { color: #e05c30; }
+    .arch-pkg {
+      font-size: 10px; color: #555;
+      font-family: 'DM Mono', monospace;
+      margin-top: 3px;
+    }
+    .arch-lake {
+      background: #1e2a1e;
+      border: 1px solid #2a3a2a;
+    }
+    .arch-lake .arch-node-val span { color: #4ade80; }
+
+    /* ── TERMINAL ── */
+    .terminal-wrap { display: flex; flex-direction: column; gap: 14px; }
+
+    /* macOS window chrome */
+    .terminal-window {
+      background: #0d1117;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .terminal-titlebar {
+      background: #1c1c1e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title-text {
+      flex: 1; text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: #555;
+    }
+    .terminal-clear-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: #555;
+      background: none; border: none; cursor: pointer;
+      padding: 0;
+    }
+    .terminal-clear-btn:hover { color: #aaa; }
+
+    .terminal-body {
+      padding: 16px 20px;
+      min-height: 480px;
+      max-height: 520px;
+      overflow-y: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+    .terminal-body::-webkit-scrollbar { width: 4px; }
+    .terminal-body::-webkit-scrollbar-track { background: transparent; }
+    .terminal-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    /* Output line types */
+    .t-default { color: #cdd6f4; }
+    .t-prompt  { color: #a6e3a1; }
+    .t-cmd     { color: #cdd6f4; font-weight: 500; }
+    .t-success { color: #a6e3a1; }
+    .t-warning { color: #f9e2af; }
+    .t-error   { color: #f38ba8; }
+    .t-dim     { color: #585b70; }
+    .t-data    { color: #89dceb; }
+    .t-high    { color: #fab387; }
+    .t-bold    { color: #cdd6f4; font-weight: 700; }
+    .t-section { color: #b4befe; font-weight: 700; }
+    .t-table   { color: #89b4fa; }
+    .t-muted   { color: #45475a; }
+    .t-arrow   { color: #89dceb; }
+    .t-val     { color: #a6e3a1; }
+    .t-stale   { color: #f9e2af; }
+    .t-crit    { color: #f38ba8; }
+
+    /* Cursor */
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: #a6e3a1;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+      margin-left: 1px;
+    }
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+    /* Progress bar */
+    .t-progress-wrap { color: #89dceb; }
+    .t-bar { display: inline-block; color: #a6e3a1; letter-spacing: -1px; }
+    .t-bar-bg { display: inline-block; color: #313244; letter-spacing: -1px; }
+
+    /* Prompt line at bottom */
+    .terminal-prompt-line {
+      padding: 8px 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-top: 1px solid #1e2030;
+    }
+    .prompt-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px; color: #a6e3a1;
+      white-space: nowrap;
+    }
+    .prompt-input {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px; color: #cdd6f4;
+      background: none; border: none; outline: none;
+      caret-color: #a6e3a1;
+    }
+    .prompt-input::placeholder { color: #45475a; }
+
+    /* Tech stack note */
+    .tech-note {
+      background: #fff;
+      border: 1px solid #e0ddd6;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .tech-col { flex: 1; min-width: 160px; }
+    .tech-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #aaa; margin-bottom: 6px;
+    }
+    .tech-item {
+      font-size: 12px; color: #555;
+      margin-bottom: 3px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .tech-item code {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: #1a1a1a;
+      background: #f5f5f0;
+      padding: 1px 5px; border-radius: 4px;
+    }
+
+    .dd-note {
+      background: #faf9f7;
+      border: 1px solid #e8e5de;
+      border-left: 3px solid #C41E3A;
+      border-radius: 0 8px 8px 0;
+      padding: 11px 14px;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.5;
+      flex: 2;
+    }
+    .dd-note strong { color: #1a1a1a; }
+
+    .sanity-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      background: #f0f4fa; color: #2a4a8e; border: 1px solid #c0cce8;
+      border-radius: 20px; padding: 2px 8px;
+    }
+    .sanity-dot { width: 5px; height: 5px; border-radius: 50%; background: #e05c30; }
+
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; }
+      .page-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="tpg-header">
+  <span class="tpg-logo">The Points Guy</span>
+  <ul class="tpg-nav-links">
+    <li>News</li>
+    <li>Reviews</li>
+    <li>Guides</li>
+    <li class="active">Internal Tools</li>
+    <li>Credit Cards</li>
+  </ul>
+  <span class="proto-badge">Prototype</span>
+</header>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">TPG CMS CLI</h1>
+    <p class="page-sub">A command-line tool for TPG's editorial team — connecting Claude directly to the Sanity CMS for content auditing, AI-assisted enrichment, and first-draft scaffolding. Built on <code style="font-family:'DM Mono',monospace;font-size:12px;background:#f0f0ea;padding:1px 5px;border-radius:3px">sanity exec</code> + the Anthropic SDK.</p>
+  </div>
+  <div class="pkg-badge">npm install -g @tpg/cms-cli</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div>
+      <div class="section-label">Available commands</div>
+
+      <div class="cmd-card" id="card-audit" onclick="runCommand('audit')">
+        <div class="cmd-line">
+          <span class="cmd-prompt">$</span>
+          <span class="cmd-name">tpg cms</span>
+          <span class="cmd-args">audit</span>
+        </div>
+        <div class="cmd-desc">Surfaces all articles flagged as stale, expired, or requiring review. Sorted by priority score.</div>
+        <div class="cmd-tags">
+          <span class="cmd-tag sanity">Sanity GROQ</span>
+          <span class="cmd-tag dashboard">↔ Dashboard</span>
+        </div>
+        <div class="run-hint">▶ Click to run</div>
+      </div>
+
+      <div class="cmd-card" style="margin-top:10px" id="card-enrich" onclick="runCommand('enrich')">
+        <div class="cmd-line">
+          <span class="cmd-prompt">$</span>
+          <span class="cmd-name">tpg cms enrich</span>
+          <span class="cmd-args">--article "chase-sapphire-preferred"</span>
+        </div>
+        <div class="cmd-desc">AI-fills missing or stale metadata fields on a specific article. Dry run by default — use <code style="font-family:'DM Mono',monospace;font-size:10.5px">--write</code> to commit.</div>
+        <div class="cmd-tags">
+          <span class="cmd-tag claude">Claude</span>
+          <span class="cmd-tag sanity">Sanity patch</span>
+        </div>
+        <div class="run-hint">▶ Click to run</div>
+      </div>
+
+      <div class="cmd-card" style="margin-top:10px" id="card-draft" onclick="runCommand('draft')">
+        <div class="cmd-line">
+          <span class="cmd-prompt">$</span>
+          <span class="cmd-name">tpg cms draft</span>
+          <span class="cmd-args">--card "amex-platinum-2026"</span>
+        </div>
+        <div class="cmd-desc">Scaffolds a first-draft article from the Sanity card catalog. Creates an unpublished draft — writer owns voice and judgment.</div>
+        <div class="cmd-tags">
+          <span class="cmd-tag claude">Claude</span>
+          <span class="cmd-tag sanity">Sanity draft</span>
+        </div>
+        <div class="run-hint">▶ Click to run</div>
+      </div>
+
+      <div class="cmd-card" style="margin-top:10px" id="card-freshness" onclick="runCommand('freshness')">
+        <div class="cmd-line">
+          <span class="cmd-prompt">$</span>
+          <span class="cmd-name">tpg cms freshness-check</span>
+          <span class="cmd-args">--days 90</span>
+        </div>
+        <div class="cmd-desc">Scores all 847 articles against the freshness threshold. Outputs a prioritized report and saves JSON to disk.</div>
+        <div class="cmd-tags">
+          <span class="cmd-tag sanity">Sanity GROQ</span>
+        </div>
+        <div class="run-hint">▶ Click to run</div>
+      </div>
+    </div>
+
+    <!-- Dashboard overlap callout -->
+    <div class="overlap-callout">
+      <div class="overlap-title">↔ Connected to Content Health Dashboard</div>
+      <div class="overlap-desc"><code style="font-family:'DM Mono',monospace;font-size:10.5px">tpg cms audit</code> runs the same GROQ query powering the Content Health Dashboard — giving editors the same data in their terminal. Writers who prefer a UI see it there; engineers who prefer a terminal see it here. One data source, two surfaces.</div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="arch-panel">
+      <div class="arch-title">Architecture</div>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-label">Editorial team runs</div>
+          <div class="arch-node-val"><span>tpg cms</span> &lt;command&gt;</div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-node">
+          <div class="arch-node-label">CLI runtime</div>
+          <div class="arch-node-val">Node.js · <span>sanity exec</span></div>
+          <div class="arch-pkg">TypeScript · @sanity/client</div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-split">
+          <div class="arch-node sanity-node">
+            <div class="arch-node-label">CMS</div>
+            <div class="arch-node-val"><span>Sanity</span> GROQ</div>
+            <div class="arch-pkg">reads + patches</div>
+          </div>
+          <div class="arch-node claude-node">
+            <div class="arch-node-label">AI</div>
+            <div class="arch-node-val"><span>Claude</span> API</div>
+            <div class="arch-pkg">@anthropic-ai/sdk</div>
+          </div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-node arch-lake">
+          <div class="arch-node-label">Content Lake</div>
+          <div class="arch-node-val"><span>Sanity</span> production dataset</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: TERMINAL + TECH NOTE -->
+  <div class="terminal-wrap">
+    <div class="terminal-window">
+      <div class="terminal-titlebar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="terminal-title-text">tpg-cms-cli — bash</div>
+        <button class="terminal-clear-btn" onclick="clearTerminal()">clear</button>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="t-dim"># TPG CMS CLI v1.2.0 — connected to Sanity project: tpg-editorial</div>
+        <div class="t-dim"># Select a command on the left to run a simulation, or type below.</div>
+        <div class="t-dim">#</div>
+        <div class="t-dim"># Available: audit · enrich · draft · freshness-check</div>
+        <br/>
+        <span class="cursor" id="cursor"></span>
+      </div>
+      <div class="terminal-prompt-line">
+        <span class="prompt-text">tpg@cms ~ %</span>
+        <input class="prompt-input" id="promptInput" placeholder="type a command or click one above…" onkeydown="handleInputKey(event)" />
+      </div>
+    </div>
+
+    <div class="tech-note">
+      <div class="tech-col">
+        <div class="tech-label">Production stack</div>
+        <div class="tech-item"><code>@sanity/client</code> — GROQ queries + patches</div>
+        <div class="tech-item"><code>@anthropic-ai/sdk</code> — Claude streaming</div>
+        <div class="tech-item"><code>sanity exec</code> — authenticated runtime</div>
+        <div class="tech-item"><code>commander.js</code> — CLI argument parsing</div>
+      </div>
+      <div class="tech-col">
+        <div class="tech-label">Safety model</div>
+        <div class="tech-item">All commands are <strong>dry-run by default</strong></div>
+        <div class="tech-item">Use <code>--write</code> to commit Sanity patches</div>
+        <div class="tech-item">Schema validation on every AI-generated output</div>
+        <div class="tech-item">Full audit log written to <code>~/.tpg/audit.log</code></div>
+      </div>
+      <div class="dd-note">
+        <strong>Design decision:</strong> This is deliberately a CLI, not a UI. Power users (editors who live in their terminal, engineers running batch jobs) get a tool that fits their workflow without adding another browser tab. The CLI and the <span class="sanity-badge"><span class="sanity-dot"></span>Sanity</span> Content Health Dashboard share the same data source — same GROQ query, same staleness scores. One data layer, two surfaces for two different user types.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── COMMAND SCRIPTS ──
+  // Each entry: { text, class, delay (ms after prev line), progress? }
+  const SCRIPTS = {
+    audit: {
+      cmd: 'tpg cms audit',
+      lines: [
+        { t:'', c:'', d:80 },
+        { t:'🔍 Connecting to Sanity Content Lake...', c:'t-dim', d:180 },
+        { t:'✓ Connected  (project: tpg-editorial  ·  dataset: production)', c:'t-success', d:420 },
+        { t:'', c:'', d:80 },
+        { t:'📊 Running freshness audit across 847 articles...', c:'t-default', d:300 },
+        { t:'', c:'', d:80 },
+        { t:'   GROQ → *[_type == "article" && (', c:'t-table', d:200 },
+        { t:'            stalenessScore > 40 ||', c:'t-table', d:80 },
+        { t:'            offerExpiration < now() ||', c:'t-table', d:80 },
+        { t:'            affiliateLinkStatus == "broken"', c:'t-table', d:80 },
+        { t:'          )] | order(stalenessScore desc)', c:'t-table', d:80 },
+        { t:'', c:'', d:600 },
+        { t:'   Found 8 articles requiring attention:', c:'t-warning', d:200 },
+        { t:'', c:'', d:100 },
+        { t:'   ┌──────────────────────────────────────────────────┬───────┬──────────────────────────────┐', c:'t-muted', d:80 },
+        { t:'   │ Article                                          │ Score │ Flags                        │', c:'t-bold', d:60 },
+        { t:'   ├──────────────────────────────────────────────────┼───────┼──────────────────────────────┤', c:'t-muted', d:60 },
+        { t:'   │ Chase Sapphire Preferred Card Review             │  94   │ OFFER_EXPIRED, VALUATION     │', c:'t-crit', d:120 },
+        { t:'   │ Amex Platinum Card Review 2025                   │  89   │ OFFER_EXPIRED                │', c:'t-crit', d:100 },
+        { t:'   │ United MileagePlus: The Complete Guide           │  86   │ STALE, SEO_DECAY             │', c:'t-crit', d:100 },
+        { t:'   │ Southwest Companion Pass: Complete Guide         │  81   │ OFFER_EXPIRED, STALE         │', c:'t-crit', d:100 },
+        { t:'   │ Delta SkyMiles Redemption Guide                  │  83   │ VALUATION, BROKEN_AFFILIATE  │', c:'t-crit', d:100 },
+        { t:'   │ Marriott Bonvoy Points: Are They Worth It?       │  75   │ VALUATION, STALE             │', c:'t-stale', d:100 },
+        { t:'   │ Best Credit Cards of 2025                        │  78   │ STALE                        │', c:'t-stale', d:100 },
+        { t:'   │ Hyatt Transfer Partners: Full Guide              │  71   │ VALUATION                    │', c:'t-stale', d:100 },
+        { t:'   └──────────────────────────────────────────────────┴───────┴──────────────────────────────┘', c:'t-muted', d:80 },
+        { t:'', c:'', d:100 },
+        { t:'   ⚠  5 articles are CRITICAL (score ≥ 80) — recommend immediate review', c:'t-warning', d:200 },
+        { t:'', c:'', d:80 },
+        { t:'   → Run `tpg cms enrich --article <slug>` to AI-enrich a specific article', c:'t-arrow', d:150 },
+        { t:'   → These results also appear in the Content Health Dashboard ↗', c:'t-arrow', d:100 },
+        { t:'', c:'', d:80 },
+      ]
+    },
+
+    enrich: {
+      cmd: 'tpg cms enrich --article "chase-sapphire-preferred"',
+      lines: [
+        { t:'', c:'', d:80 },
+        { t:'🔍 Fetching article from Sanity...', c:'t-dim', d:250 },
+        { t:'✓ Found: "Chase Sapphire Preferred Card Review"  (_id: draft.csp-2025)', c:'t-success', d:400 },
+        { t:'', c:'', d:100 },
+        { t:'📋 Current metadata state:', c:'t-section', d:200 },
+        { t:'   title              "Chase Sapphire Preferred Card Review: Best Mid-Tier Travel Card of 2025"', c:'t-data', d:100 },
+        { t:'   metaDescription    [MISSING]', c:'t-error', d:80 },
+        { t:'   tags               ["chase", "credit-card"]', c:'t-data', d:80 },
+        { t:'   welcomeBonus       60000  ← STALE (current offer: 80,000 points)', c:'t-warning', d:80 },
+        { t:'   offerExpiration    "2025-12-31"  ← EXPIRED', c:'t-error', d:80 },
+        { t:'   pointValuationVerified  false  ← valuation changed Feb 3, 2026', c:'t-warning', d:80 },
+        { t:'', c:'', d:200 },
+        { t:'🤖 Invoking Claude (claude-sonnet-4-20250514)...', c:'t-dim', d:300 },
+        { t:'   system: "You are a TPG editorial assistant. Update only verified fields.', c:'t-dim', d:100 },
+        { t:'           TPG voice: direct, specific, no fluff. Flag anything uncertain."', c:'t-dim', d:80 },
+        { t:'   Streaming response ···', c:'t-dim', d:800 },
+        { t:'', c:'', d:100 },
+        { t:'✓ Generated metaDescription:', c:'t-success', d:200 },
+        { t:'   "The Chase Sapphire Preferred offers 80,000 bonus points after $4,000', c:'t-high', d:80 },
+        { t:'    spend in 3 months — worth ~$1,640 at TPG\'s 2.05¢ valuation. Full 2026', c:'t-high', d:80 },
+        { t:'    review with earning rates, transfer partners, and who should apply."', c:'t-high', d:80 },
+        { t:'', c:'', d:100 },
+        { t:'✓ Updated tags:  ["chase", "credit-card", "sapphire-preferred", "chase-ultimate-rewards", "travel"]', c:'t-success', d:150 },
+        { t:'✓ welcomeBonus patched:        60000 → 80000', c:'t-success', d:100 },
+        { t:'✓ offerExpiration updated:     2025-12-31 → 2026-06-30', c:'t-success', d:100 },
+        { t:'✓ pointValuationVerified reset: false → true', c:'t-success', d:100 },
+        { t:'', c:'', d:200 },
+        { t:'📝 Sanity mutation prepared  (DRY RUN — no changes committed)', c:'t-warning', d:200 },
+        { t:'   PATCH draft.csp-2025 {', c:'t-table', d:80 },
+        { t:'     metaDescription: "...",', c:'t-table', d:60 },
+        { t:'     tags: [...],', c:'t-table', d:60 },
+        { t:'     welcomeBonus: 80000,', c:'t-table', d:60 },
+        { t:'     offerExpiration: "2026-06-30",', c:'t-table', d:60 },
+        { t:'     pointValuationVerified: true', c:'t-table', d:60 },
+        { t:'   }', c:'t-table', d:60 },
+        { t:'', c:'', d:100 },
+        { t:'   → Re-run with --write to commit these changes to Sanity', c:'t-arrow', d:120 },
+        { t:'   → Review in Sanity Studio: tpg.sanity.studio/structure/article;draft.csp-2025', c:'t-arrow', d:100 },
+        { t:'', c:'', d:80 },
+      ]
+    },
+
+    draft: {
+      cmd: 'tpg cms draft --card "amex-platinum-2026"',
+      lines: [
+        { t:'', c:'', d:80 },
+        { t:'🔍 Fetching card data from Sanity card catalog...', c:'t-dim', d:280 },
+        { t:'✓ Found: "Amex Platinum Card 2026"  (collection: cardCatalog)', c:'t-success', d:420 },
+        { t:'', c:'', d:100 },
+        { t:'📋 Card data loaded from CMS:', c:'t-section', d:200 },
+        { t:'   welcomeBonus      80,000 Amex MR points', c:'t-data', d:80 },
+        { t:'   annualFee         $695', c:'t-data', d:60 },
+        { t:'   tpgValuation      2.0¢/pt  →  ~$1,600 bonus value', c:'t-data', d:60 },
+        { t:'   transferPartners  20 airlines and hotels', c:'t-data', d:60 },
+        { t:'   keyBenefits       [Centurion lounge, $200 airline credit, $200 hotel,', c:'t-data', d:60 },
+        { t:'                      $240 digital credit, Priority Pass, Global Entry]', c:'t-data', d:60 },
+        { t:'', c:'', d:200 },
+        { t:'🤖 Invoking Claude (claude-sonnet-4-20250514)...', c:'t-dim', d:300 },
+        { t:'   system: "Generate a first-draft TPG card review scaffold from verified data.', c:'t-dim', d:80 },
+        { t:'           Flag any fields requiring writer verification. One-click scaffolding,', c:'t-dim', d:80 },
+        { t:'           not one-click publishing. Writer owns voice and judgment."', c:'t-dim', d:80 },
+        { t:'   Streaming ·····················', c:'t-dim', d:1200 },
+        { t:'', c:'', d:100 },
+        { t:'✓ Draft scaffold created:', c:'t-success', d:200 },
+        { t:'', c:'', d:80 },
+        { t:'   HEADLINE:', c:'t-section', d:100 },
+        { t:'   "Amex Platinum Card Review 2026: Is the $695 Annual Fee Worth It?"', c:'t-high', d:80 },
+        { t:'', c:'', d:80 },
+        { t:'   INTRO (draft):', c:'t-section', d:100 },
+        { t:'   "The Amex Platinum Card\'s 80,000-point welcome offer — worth ~$1,600 at', c:'t-default', d:60 },
+        { t:'    TPG\'s 2.0¢ valuation — is one of the most lucrative in the premium card', c:'t-default', d:60 },
+        { t:'    space. But with a $695 annual fee, the real question is whether the card\'s', c:'t-default', d:60 },
+        { t:'    ongoing perks justify the cost year after year."', c:'t-default', d:60 },
+        { t:'', c:'', d:80 },
+        { t:'   SECTIONS READY:    ✓ Welcome Offer   ✓ Key Benefits   ✓ Who Should Apply', c:'t-success', d:120 },
+        { t:'   QUICK FACTS CARD:  ✓ Auto-populated from card catalog', c:'t-success', d:80 },
+        { t:'', c:'', d:100 },
+        { t:'   ⚠  3 fields flagged for writer verification:', c:'t-warning', d:150 },
+        { t:'      - Centurion Lounge location list  (last updated Q3 2025)', c:'t-warning', d:80 },
+        { t:'      - Disney Bundle credit current terms', c:'t-warning', d:80 },
+        { t:'      - Walmart+ credit — confirm active for 2026', c:'t-warning', d:80 },
+        { t:'', c:'', d:150 },
+        { t:'📝 Draft document created in Sanity  (unpublished):', c:'t-section', d:200 },
+        { t:'   Document ID:  draft.amex-platinum-2026-review', c:'t-data', d:80 },
+        { t:'   Status:       DRAFT — writer review required before publish', c:'t-warning', d:80 },
+        { t:'', c:'', d:100 },
+        { t:'   → Open in Sanity Studio: tpg.sanity.studio/structure/article;draft.amex-plat...', c:'t-arrow', d:100 },
+        { t:'   → Assign to writer: `tpg cms assign draft.amex-platinum-2026-review --writer "sarah-lee"`', c:'t-arrow', d:100 },
+        { t:'', c:'', d:80 },
+      ]
+    },
+
+    freshness: {
+      cmd: 'tpg cms freshness-check --days 90',
+      lines: [
+        { t:'', c:'', d:80 },
+        { t:'📊 Running freshness check  (threshold: 90 days)...', c:'t-default', d:200 },
+        { t:'✓ Connected to Sanity Content Lake', c:'t-success', d:300 },
+        { t:'', c:'', d:100 },
+        { t:'   Scoring 847 articles...', c:'t-dim', d:200 },
+        { t:'', c:'', d:100 },
+        { progress: true, total: 847, d: 1400 },
+        { t:'', c:'', d:200 },
+        { t:'   FRESHNESS REPORT  ·  Feb 26, 2026', c:'t-section', d:200 },
+        { t:'   ────────────────────────────────────────', c:'t-muted', d:80 },
+        { t:'   ✓  Healthy   (< 40 days):     614 articles   (72.5%)', c:'t-success', d:120 },
+        { t:'   ⚠  Needs review (40–90d):     178 articles   (21.0%)', c:'t-stale', d:100 },
+        { t:'   ✗  Stale      (> 90 days):     55 articles   ( 6.5%)', c:'t-crit', d:100 },
+        { t:'', c:'', d:100 },
+        { t:'   TOP 5 STALEST ARTICLES:', c:'t-section', d:200 },
+        { t:'   1.  How to Transfer Amex Points to Airlines  ·············  142 days', c:'t-stale', d:100 },
+        { t:'   2.  Best Hotels in Tokyo 2025                ·············  134 days', c:'t-stale', d:100 },
+        { t:'   3.  United MileagePlus: The Complete Guide   ·············  134 days', c:'t-stale', d:100 },
+        { t:'   4.  Chase Sapphire Preferred Card Review     ·············  112 days', c:'t-crit', d:100 },
+        { t:'   5.  Marriott Bonvoy Points: Are They Worth It ············  105 days', c:'t-crit', d:100 },
+        { t:'', c:'', d:100 },
+        { t:'   VALUATION ALERTS  (TPG monthly valuations changed since last publish):', c:'t-warning', d:200 },
+        { t:'   → Delta SkyMiles:   1.41¢ → 1.20¢  (affects 23 articles)', c:'t-crit', d:100 },
+        { t:'   → Marriott Bonvoy:  0.90¢ → 0.84¢  (affects 18 articles)', c:'t-warning', d:80 },
+        { t:'   → Hyatt:            1.70¢ → 1.72¢  (affects 12 articles)', c:'t-stale', d:80 },
+        { t:'   → Chase UR:         2.00¢ → 2.05¢  (affects 31 articles)', c:'t-stale', d:80 },
+        { t:'', c:'', d:100 },
+        { t:'   AFFILIATE LINK HEALTH:', c:'t-section', d:150 },
+        { t:'   ✓ 839 links OK   ·   ✗ 7 broken   ·   ? 1 unchecked', c:'t-default', d:100 },
+        { t:'', c:'', d:100 },
+        { t:'   Full report saved → ./reports/freshness-2026-02-26.json', c:'t-success', d:150 },
+        { t:'', c:'', d:80 },
+        { t:'   → Run `tpg cms audit` for full issue breakdown with per-article flags', c:'t-arrow', d:120 },
+        { t:'   → View in Content Health Dashboard ↗', c:'t-arrow', d:80 },
+        { t:'', c:'', d:80 },
+      ]
+    }
+  };
+
+  let animating = false;
+  let activeCmd = null;
+
+  function clearTerminal() {
+    const body = document.getElementById('termBody');
+    body.innerHTML = '<span class="cursor" id="cursor"></span>';
+    animating = false;
+    activeCmd = null;
+    ['audit','enrich','draft','freshness'].forEach(k => {
+      document.getElementById('card-'+k).classList.remove('active','running');
+    });
+  }
+
+  function runCommand(key) {
+    if (animating) return;
+    const script = SCRIPTS[key];
+    if (!script) return;
+
+    // Mark active
+    ['audit','enrich','draft','freshness'].forEach(k => {
+      document.getElementById('card-'+k).classList.remove('active','running');
+    });
+    document.getElementById('card-'+key).classList.add('active','running');
+    activeCmd = key;
+
+    const body = document.getElementById('termBody');
+    // Remove cursor temporarily
+    const oldCursor = document.getElementById('cursor');
+    if (oldCursor) oldCursor.remove();
+
+    // Add a blank line if terminal has content
+    if (body.children.length > 0) {
+      body.appendChild(document.createElement('br'));
+    }
+
+    animating = true;
+    typeCommand(script.cmd, body, () => {
+      playLines(script.lines, body, 0, () => {
+        animating = false;
+        document.getElementById('card-'+key).classList.remove('running');
+        // Add cursor at end
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        cursor.id = 'cursor';
+        body.appendChild(cursor);
+        body.scrollTop = body.scrollHeight;
+      });
+    });
+  }
+
+  function typeCommand(cmd, body, done) {
+    const promptLine = document.createElement('div');
+    promptLine.innerHTML = `<span class="t-prompt">tpg@cms ~ %</span> <span class="t-cmd"></span><span class="cursor" style="background:#cdd6f4"></span>`;
+    body.appendChild(promptLine);
+    body.scrollTop = body.scrollHeight;
+
+    const cmdEl = promptLine.querySelector('.t-cmd');
+    const fakeCursor = promptLine.querySelector('.cursor');
+    let i = 0;
+    const speed = 35;
+    const interval = setInterval(() => {
+      cmdEl.textContent = cmd.slice(0, i);
+      i++;
+      body.scrollTop = body.scrollHeight;
+      if (i > cmd.length) {
+        clearInterval(interval);
+        fakeCursor.remove();
+        setTimeout(done, 180);
+      }
+    }, speed);
+  }
+
+  function playLines(lines, body, idx, done) {
+    if (idx >= lines.length) { done(); return; }
+    const line = lines[idx];
+    const delay = line.d || 80;
+
+    setTimeout(() => {
+      if (line.progress) {
+        animateProgress(body, line.total, line.d || 1200, () => {
+          playLines(lines, body, idx + 1, done);
+        });
+        return;
+      }
+      const div = document.createElement('div');
+      if (line.t === '') {
+        div.innerHTML = '&nbsp;';
+        div.style.lineHeight = '0.4';
+      } else {
+        div.className = line.c || 't-default';
+        div.textContent = line.t;
+      }
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+      playLines(lines, body, idx + 1, done);
+    }, delay);
+  }
+
+  function animateProgress(body, total, duration, done) {
+    const div = document.createElement('div');
+    div.className = 't-progress-wrap';
+    body.appendChild(div);
+
+    const barWidth = 36;
+    const steps = 30;
+    const stepTime = duration / steps;
+    let step = 0;
+
+    const interval = setInterval(() => {
+      step++;
+      const pct = step / steps;
+      const filled = Math.round(pct * barWidth);
+      const empty = barWidth - filled;
+      const count = Math.round(pct * total);
+      div.innerHTML =
+        `   <span class="t-bar">${'█'.repeat(filled)}</span><span class="t-bar-bg">${'░'.repeat(empty)}</span>` +
+        `  <span class="t-val">${Math.round(pct*100)}%</span>` +
+        `  <span class="t-dim">(${count.toLocaleString()}/${total.toLocaleString()})</span>`;
+      body.scrollTop = body.scrollHeight;
+      if (step >= steps) {
+        clearInterval(interval);
+        setTimeout(done, 100);
+      }
+    }, stepTime);
+  }
+
+  function handleInputKey(e) {
+    if (e.key === 'Enter') {
+      const val = e.target.value.trim();
+      e.target.value = '';
+      if (!val) return;
+      if (val === 'clear') { clearTerminal(); return; }
+      if (val.includes('audit')) { runCommand('audit'); return; }
+      if (val.includes('enrich')) { runCommand('enrich'); return; }
+      if (val.includes('draft')) { runCommand('draft'); return; }
+      if (val.includes('freshness')) { runCommand('freshness'); return; }
+      // Unknown command
+      const body = document.getElementById('termBody');
+      const oldC = document.getElementById('cursor');
+      if (oldC) oldC.remove();
+      const line = document.createElement('div');
+      line.innerHTML = `<span class="t-prompt">tpg@cms ~ %</span> <span class="t-cmd">${val}</span>`;
+      body.appendChild(line);
+      const err = document.createElement('div');
+      err.className = 't-error';
+      err.textContent = `command not found: ${val.split(' ')[0]}. Try: audit · enrich · draft · freshness-check`;
+      body.appendChild(err);
+      body.appendChild(document.createElement('br'));
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      cursor.id = 'cursor';
+      body.appendChild(cursor);
+      body.scrollTop = body.scrollHeight;
+    }
+  }
+</script>
+</body>
+</html>

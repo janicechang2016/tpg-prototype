@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPG Contextual Chat — Chase Sapphire Preferred</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 32px;
+    }
+
+    /* ── NAV ── */
+    .tpg-topbar {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      height: 48px;
+      margin-bottom: 24px;
+    }
+    .tpg-topbar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 600; color: #1a1a1a;
+    }
+    .tpg-topbar-links {
+      display: flex; gap: 18px; list-style: none;
+      font-size: 12px; font-weight: 500; color: #555;
+    }
+    .tpg-topbar-links li { cursor: pointer; }
+    .tpg-topbar-links li:hover, .tpg-topbar-links li.active { color: #C41E3A; }
+    .tpg-topbar-links li.active { font-weight: 600; }
+    .proto-badge {
+      margin-left: auto;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      background: #fff4f0; color: #C41E3A; border: 1px solid #f5c6bc;
+      border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── WRAP ── */
+    .tpg-wrap {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      width: 100%;
+      max-width: 1100px;
+      min-height: 700px;
+      border: 1px solid #e0ddd6;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    /* ── ARTICLE SIDE ── */
+    .article-side {
+      padding: 28px 36px 40px;
+      border-right: 1px solid #e8e5de;
+      overflow-y: auto;
+      max-height: 800px;
+    }
+
+    .tpg-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 11px; color: #888;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      justify-content: space-between;
+    }
+    .tpg-nav-left { display: flex; align-items: center; gap: 8px; }
+    .tpg-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 600; color: #1a1a1a;
+      letter-spacing: -0.01em; text-transform: none;
+    }
+    .tpg-nav .sep { color: #ccc; }
+
+    .cms-view-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      background: #f0f4fa; color: #2a4a8e; border: 1px solid #c0cce8;
+      border-radius: 20px; padding: 3px 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .cms-view-btn:hover { background: #e0eaf7; }
+    .sanity-dot { width: 5px; height: 5px; border-radius: 50%; background: #e05c30; }
+
+    .article-tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #C41E3A; margin-bottom: 10px;
+    }
+    .article-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 600; line-height: 1.3;
+      color: #1a1a1a; margin-bottom: 12px;
+    }
+    .article-meta {
+      font-size: 12px; color: #888; margin-bottom: 16px;
+      display: flex; gap: 12px; align-items: center;
+    }
+    .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #bbb; }
+
+    /* Freshness badge */
+    .freshness-wrap { margin-bottom: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .freshness-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 500;
+      background: #eafaf1; color: #1a7c45;
+      border: 1px solid #a3d9b8; border-radius: 20px; padding: 3px 10px;
+      cursor: help; position: relative;
+    }
+    .freshness-badge:hover .dd-tooltip { display: block; }
+    .freshness-dot { width: 6px; height: 6px; border-radius: 50%; background: #27ae60; flex-shrink: 0; }
+    .cms-tag {
+      font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+      color: #888; border: 1px solid #ddd; border-radius: 4px; padding: 1px 5px;
+    }
+
+    .quick-facts {
+      background: #faf9f7; border-left: 3px solid #C41E3A;
+      border-radius: 0 8px 8px 0; padding: 16px 18px; margin: 20px 0;
+    }
+    .quick-facts-title {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #C41E3A; margin-bottom: 12px;
+    }
+    .fact-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12.5px; padding: 5px 0;
+      border-bottom: 1px solid #ece9e2; color: #333;
+    }
+    .fact-row:last-child { border-bottom: none; }
+    .fact-val { font-weight: 600; color: #1a1a1a; }
+
+    .article-body { font-family: 'Source Serif 4', serif; font-size: 15px; line-height: 1.8; color: #2d2d2d; }
+    .article-body p { margin-bottom: 16px; }
+    .article-body strong { font-weight: 600; }
+
+    .apply-cta {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #1a1a1a; border-radius: 8px; padding: 14px 18px;
+      margin-top: 20px; gap: 12px;
+    }
+    .apply-cta-text { font-size: 13px; color: #ddd; line-height: 1.4; }
+    .apply-cta-text strong { color: #fff; }
+    .apply-cta-btn {
+      padding: 9px 18px; background: #C41E3A; color: white;
+      border: none; border-radius: 7px; font-size: 12.5px; font-weight: 700;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .apply-cta-btn:hover { opacity: 0.88; }
+
+    /* ── CHAT SIDE ── */
+    .chat-side {
+      display: flex; flex-direction: column;
+      background: #fff; max-height: 800px;
+    }
+
+    .chat-header {
+      padding: 14px 16px 12px; border-bottom: 1px solid #e8e5de; background: #fff;
+    }
+    .chat-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .chat-icon {
+      width: 28px; height: 28px; background: #C41E3A;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .chat-icon svg { width: 15px; height: 15px; fill: white; }
+    .chat-title { font-size: 14px; font-weight: 600; color: #1a1a1a; flex: 1; }
+
+    .chat-subtitle {
+      font-size: 11.5px; color: #888; line-height: 1.4;
+      display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+    }
+
+    /* ── MESSAGES ── */
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .msg { display: flex; gap: 9px; }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; margin-top: 2px;
+    }
+    .msg-avatar.ai { background: #fde8ea; color: #C41E3A; }
+    .msg-avatar.user { background: #dbeafe; color: #1d4ed8; }
+    .msg-bubble {
+      max-width: 86%; padding: 10px 13px;
+      font-size: 13px; line-height: 1.65; color: #1a1a1a;
+    }
+    .msg.ai .msg-bubble {
+      background: #f7f6f3; border: 1px solid #e8e5de;
+      border-radius: 4px 12px 12px 12px;
+    }
+    .msg.user .msg-bubble {
+      background: #C41E3A; color: white;
+      border-radius: 12px 4px 12px 12px;
+    }
+
+    /* Source pills */
+    .msg-footer { margin-top: 7px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .source-pill {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: #fff; border: 1px solid #ddd; border-radius: 20px;
+      padding: 2px 8px; font-size: 10px; color: #777;
+      cursor: help; font-family: 'DM Sans', sans-serif;
+      position: relative;
+    }
+    .source-pill:hover { border-color: #C41E3A; color: #C41E3A; }
+    .source-pill:hover .dd-tooltip { display: block; }
+
+    /* Inline CTA inside chat */
+    .msg-cta {
+      margin-top: 8px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #C41E3A; color: white;
+      border: none; border-radius: 7px;
+      padding: 7px 14px; font-size: 12px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .msg-cta:hover { opacity: 0.88; }
+
+    /* Suggested questions */
+    .suggested-qs {
+      padding: 0 14px 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .suggested-label {
+      font-size: 10px; color: #aaa; text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 2px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .suggested-q {
+      background: #fff; border: 1px solid #e0ddd6; border-radius: 8px;
+      padding: 7px 11px; font-size: 12px; color: #333;
+      cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif;
+      line-height: 1.4; transition: background 0.15s, border-color 0.15s;
+    }
+    .suggested-q:hover { background: #fdf5f5; border-color: #C41E3A; color: #C41E3A; }
+
+    /* Input row */
+    .chat-input-row {
+      padding: 8px 12px 14px; border-top: 1px solid #e8e5de;
+      display: flex; gap: 8px; align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; border: 1px solid #ddd; border-radius: 8px;
+      padding: 9px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+      resize: none; min-height: 38px; max-height: 90px;
+      background: #fff; color: #1a1a1a; outline: none; line-height: 1.5;
+    }
+    .chat-input:focus { border-color: #C41E3A; }
+    .chat-input::placeholder { color: #aaa; }
+    .send-btn {
+      width: 36px; height: 36px; border-radius: 50%; background: #C41E3A;
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: opacity 0.15s, transform 0.1s;
+    }
+    .send-btn:hover { opacity: 0.88; transform: scale(1.05); }
+    .send-btn:active { transform: scale(0.96); }
+    .send-btn svg { width: 15px; height: 15px; fill: white; }
+    .send-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+    /* Typing indicator */
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 2px 0; }
+    .typing-dot { width: 5px; height: 5px; border-radius: 50%; background: #aaa; animation: blink 1.2s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+    /* ── DESIGN DECISION TOOLTIPS ── */
+    .dd-marker {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: #e8e5de; color: #999;
+      font-size: 8px; font-weight: 700;
+      cursor: help; position: relative; vertical-align: middle; margin-left: 3px;
+      flex-shrink: 0;
+    }
+    .dd-marker:hover .dd-tooltip { display: block; }
+    .dd-tooltip {
+      display: none;
+      position: absolute; bottom: calc(100% + 7px); left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a; color: #fff;
+      font-size: 11px; line-height: 1.55;
+      padding: 9px 13px; border-radius: 8px;
+      width: 220px; z-index: 300;
+      font-weight: 400; pointer-events: none;
+      white-space: normal; text-transform: none;
+      letter-spacing: 0;
+    }
+    .dd-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #1a1a1a;
+    }
+    /* Left-align tooltips near right edge */
+    .dd-tooltip.left { left: auto; right: 0; transform: none; }
+    .dd-tooltip.left::after { left: auto; right: 12px; transform: none; }
+
+    /* ── CMS PANEL MODAL ── */
+    .cms-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 200;
+      align-items: flex-end; justify-content: center;
+    }
+    .cms-overlay.open { display: flex; }
+    .cms-modal {
+      background: #fff; width: 100%; max-width: 1100px;
+      border-radius: 16px 16px 0 0;
+      max-height: 80vh; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .cms-modal-header {
+      background: #1a1a1a; padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .cms-modal-title { font-size: 14px; font-weight: 700; color: #fff; flex: 1; }
+    .cms-modal-sub { font-size: 11.5px; color: #666; }
+    .sanity-badge-modal {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      background: rgba(224,92,48,0.15); color: #e05c30;
+      border: 1px solid rgba(224,92,48,0.3); border-radius: 20px; padding: 3px 8px;
+    }
+    .cms-close {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #2a2a2a; color: #888; border: none;
+      font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cms-close:hover { color: #fff; }
+
+    .cms-tabs {
+      display: flex; border-bottom: 1px solid #e0ddd6; padding: 0 24px;
+      background: #faf9f7;
+    }
+    .cms-tab {
+      padding: 10px 0; margin-right: 24px;
+      font-size: 12.5px; color: #aaa;
+      cursor: pointer; border: none; background: none;
+      font-family: 'DM Sans', sans-serif;
+      border-bottom: 2px solid transparent; transition: color 0.15s;
+    }
+    .cms-tab.active { color: #C41E3A; border-bottom-color: #C41E3A; font-weight: 600; }
+
+    .cms-body {
+      padding: 20px 24px;
+      overflow-y: auto; flex: 1;
+    }
+
+    /* Fields tab */
+    .fields-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    @media (max-width: 700px) { .fields-grid { grid-template-columns: 1fr; } }
+    .field-card {
+      background: #faf9f7; border: 1px solid #e8e5de;
+      border-radius: 8px; padding: 12px 14px;
+    }
+    .field-key {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: #888; margin-bottom: 4px;
+    }
+    .field-val {
+      font-size: 13px; font-weight: 600; color: #1a1a1a;
+      word-break: break-word;
+    }
+    .field-val.ok { color: #1a7c45; }
+    .field-val.warn { color: #c47a1a; }
+    .field-val.tag-list { font-weight: 400; }
+    .field-tag {
+      display: inline-block; font-size: 10.5px;
+      background: #f0ede6; border: 1px solid #e0ddd6;
+      border-radius: 4px; padding: 1px 6px; margin: 2px;
+      color: #555; font-weight: 500;
+    }
+
+    .system-prompt-block {
+      background: #1a1a1a; border-radius: 8px; padding: 16px 18px;
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      line-height: 1.7; color: #cdd6f4; white-space: pre-wrap;
+    }
+    .system-prompt-block .sp-comment { color: #555; }
+    .system-prompt-block .sp-key { color: #89dceb; }
+    .system-prompt-block .sp-val { color: #a6e3a1; }
+
+    .groq-block {
+      background: #1a1a1a; border-radius: 8px; padding: 16px 18px;
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      line-height: 1.7; color: #cdd6f4; white-space: pre-wrap;
+    }
+    .groq-block .g-comment { color: #555; }
+    .groq-block .g-fn { color: #82aaff; }
+    .groq-block .g-str { color: #c3e88d; }
+    .groq-block .g-field { color: #f07178; }
+    .groq-block .g-kw { color: #c792ea; }
+
+    .cms-dd-note {
+      background: #fdf5f5; border: 1px solid #f5c6bc;
+      border-left: 3px solid #C41E3A;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px; margin-top: 14px;
+      font-size: 12px; color: #555; line-height: 1.5;
+    }
+    .cms-dd-note strong { color: #1a1a1a; }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .tpg-topbar { padding: 0 16px; }
+      .tpg-topbar-links { display: none; }
+      body { padding: 0; }
+      .tpg-wrap {
+        grid-template-columns: 1fr; grid-template-rows: auto 500px;
+        border-radius: 0; max-width: 100%;
+      }
+      .article-side { max-height: none; border-right: none; border-bottom: 1px solid #e8e5de; }
+      .chat-side { max-height: 500px; }
+      .cms-modal { border-radius: 12px 12px 0 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="tpg-topbar">
+  <span class="tpg-topbar-logo">The Points Guy</span>
+  <ul class="tpg-topbar-links">
+    <li>News</li>
+    <li>Reviews</li>
+    <li>Guides</li>
+    <li>Deals</li>
+    <li class="active">Credit Cards</li>
+  </ul>
+  <span class="proto-badge">Prototype</span>
+</div>
+
+<div class="tpg-wrap">
+
+  <!-- ── ARTICLE SIDE ── -->
+  <div class="article-side">
+    <div class="tpg-nav">
+      <div class="tpg-nav-left">
+        <span class="tpg-logo">The Points Guy</span>
+        <span class="sep">/</span>
+        <span>Credit Cards</span>
+        <span class="sep">/</span>
+        <span>Chase</span>
+      </div>
+      <button class="cms-view-btn" onclick="openCMS()">
+        <span class="sanity-dot"></span>
+        View CMS data
+      </button>
+    </div>
+
+    <div class="article-tag">Card Review</div>
+
+    <h1 class="article-title">Chase Sapphire Preferred Card Review: Best Mid-Tier Travel Card of 2026</h1>
+
+    <div class="article-meta">
+      <span>By Ryan Smith</span>
+      <div class="meta-dot"></div>
+      <span>Updated March 2026</span>
+      <div class="meta-dot"></div>
+      <span>8 min read</span>
+    </div>
+
+    <div class="freshness-wrap">
+      <div class="freshness-badge">
+        <div class="freshness-dot"></div>
+        Content verified · Offer expires Jun 30, 2026
+        <span class="cms-tag">CMS</span>
+        <span class="dd-tooltip">This badge is driven by the <strong>offerExpiration</strong> and <strong>lastReviewedAt</strong> fields in Sanity CMS. Stale content is automatically flagged — the AI will not surface unverified data.</span>
+      </div>
+      <span class="dd-marker" style="background:#e8f4ea;color:#1a7c45">i
+        <span class="dd-tooltip">PM design decision: making content freshness visible to readers signals that TPG's AI chat is grounded in verified data — not the open web. Trust signal, not just a badge.</span>
+      </span>
+    </div>
+
+    <div class="quick-facts">
+      <div class="quick-facts-title">Card Snapshot</div>
+      <div class="fact-row"><span>Welcome bonus</span><span class="fact-val">80,000 Chase points</span></div>
+      <div class="fact-row"><span>Min. spend to earn</span><span class="fact-val">$4,000 in 3 months</span></div>
+      <div class="fact-row"><span>Annual fee</span><span class="fact-val">$95</span></div>
+      <div class="fact-row"><span>TPG point valuation</span><span class="fact-val">2.05¢ each</span></div>
+      <div class="fact-row"><span>Bonus estimated value</span><span class="fact-val">~$1,640</span></div>
+      <div class="fact-row"><span>Dining &amp; streaming earn rate</span><span class="fact-val">3x points</span></div>
+      <div class="fact-row"><span>Annual hotel credit</span><span class="fact-val">$50</span></div>
+    </div>
+
+    <div class="article-body">
+      <p>The <strong>Chase Sapphire Preferred® Card</strong> has long been considered the gold standard for everyday travelers seeking outsized value from a mid-tier travel credit card. With a modest $95 annual fee and access to Chase's best-in-class transfer partners, it consistently earns its spot in millions of wallets.</p>
+
+      <p>The current welcome offer of <strong>80,000 Chase Ultimate Rewards® points</strong> after spending $4,000 in the first three months is worth approximately $1,640 based on TPG's latest valuations — more than 17x the annual fee in the first year alone.</p>
+
+      <p>Where this card truly shines is in its <strong>transfer partner ecosystem</strong>. Chase partners with 14 airlines and hotels, including United, Hyatt, and Singapore Airlines — giving cardholders the flexibility to maximize points across multiple programs. Hyatt transfers in particular offer some of the best redemption value in the industry, with top-tier properties available for 35,000–45,000 points per night.</p>
+
+      <p>The card earns <strong>3x points on dining and online grocery purchases</strong>, 3x on streaming services, 2x on all other travel, and 1x on everything else. A $50 annual hotel credit further offsets the annual fee. For most households, this structure comfortably covers the annual fee without ever touching the welcome bonus.</p>
+
+      <p>For travelers who want flexibility without paying a premium annual fee, the Sapphire Preferred strikes the right balance. It's the card we recommend most often to first-time travel rewards enthusiasts — and one that experienced travelers frequently keep even after upgrading to premium cards.</p>
+    </div>
+
+    <div class="apply-cta">
+      <div class="apply-cta-text">
+        <strong>80,000 bonus points · $95/yr</strong><br />
+        Offer expires Jun 30, 2026
+      </div>
+      <button class="apply-cta-btn">Apply now →</button>
+    </div>
+  </div>
+
+  <!-- ── CHAT SIDE ── -->
+  <div class="chat-side">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <div class="chat-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        </div>
+        <span class="chat-title">Ask about this card</span>
+        <span class="dd-marker">i
+          <span class="dd-tooltip left">The AI is deliberately scoped to this article's content — not the open web. A product constraint that keeps answers verifiable and reduces hallucination risk on financial data.</span>
+        </span>
+      </div>
+      <div class="chat-subtitle">
+        Answers grounded in this article and verified TPG data.
+      </div>
+    </div>
+
+    <div class="chat-messages" id="messages">
+      <div class="msg ai">
+        <div class="msg-avatar ai">T</div>
+        <div>
+          <div class="msg-bubble">Hi! I can answer questions about the Chase Sapphire Preferred based on this article and TPG's verified research. What would you like to know?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="suggested-qs" id="suggested">
+      <div class="suggested-label">
+        Try asking
+        <span class="dd-marker">i
+          <span class="dd-tooltip">In production, these questions are editorially tagged per article in the CMS — not hardcoded. They're designed to reduce first-interaction friction for readers who don't know where to start.</span>
+        </span>
+      </div>
+      <button class="suggested-q" onclick="askSuggested(this)">Is the $95 annual fee worth it if I don't travel often?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">How do I transfer points to Hyatt?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">How does this compare to the Sapphire Reserve?</button>
+    </div>
+
+    <div class="chat-input-row">
+      <textarea
+        class="chat-input" id="chatInput"
+        placeholder="Ask a question about this card…"
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── CMS METADATA MODAL ── -->
+<div class="cms-overlay" id="cmsOverlay" onclick="handleOverlayClick(event)">
+  <div class="cms-modal">
+    <div class="cms-modal-header">
+      <div>
+        <div class="cms-modal-title">CMS Metadata — Chase Sapphire Preferred Review</div>
+        <div class="cms-modal-sub">Structured content powering the AI chat panel · Read-only view</div>
+      </div>
+      <span class="sanity-badge-modal"><span class="sanity-dot"></span>Sanity</span>
+      <button class="cms-close" onclick="closeCMS()">×</button>
+    </div>
+    <div class="cms-tabs">
+      <button class="cms-tab active" onclick="switchCMSTab(this,'fields')">Article fields</button>
+      <button class="cms-tab" onclick="switchCMSTab(this,'context')">Chat context</button>
+      <button class="cms-tab" onclick="switchCMSTab(this,'groq')">GROQ query</button>
+    </div>
+    <div class="cms-body" id="cmsBody"></div>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────
+  // MOCK CLIENT-SIDE BACKEND
+  // In production: replaced by a Node/Express proxy
+  // that holds the Anthropic API key server-side and
+  // calls claude-sonnet-4-20250514 with article context
+  // retrieved dynamically from Sanity via GROQ.
+  // ─────────────────────────────────────────────────
+
+  const RESPONSES = {
+    annualFee: {
+      text: `Honestly, yes — even for occasional travelers. The $50 annual hotel credit alone offsets more than half the fee, and earning 3x on dining means most households recoup the rest from restaurant spending alone. At 2.05¢/point, you need just 4,635 points to break even — roughly $155 in dining charges at 3x.`,
+      sources: ['Card Snapshot', 'TPG valuations · Feb 2026'],
+      followUps: ["What exactly is the $50 hotel credit?", "How does 3x dining compare to other cards?", "What's the best no-annual-fee alternative?"],
+      showCTA: false
+    },
+    hyattTransfer: {
+      text: `From your Chase Ultimate Rewards dashboard, select "Transfer points" and choose World of Hyatt — transfers happen 1:1 and are usually instant. The sweet spot is top-tier Hyatt properties at 35,000–45,000 points per night; those rooms regularly cost $500–900+ in cash, so you're often getting 2–3x TPG's valuation. Park Hyatt New York, for example, goes for 40,000 points vs. ~$1,000+ in cash.`,
+      sources: ['This article · TPG research', 'TPG valuations · Feb 2026'],
+      followUps: ["Which Hyatt properties are best for this redemption?", "Are there any transfer bonuses right now?", "Can I transfer partial amounts?"],
+      showCTA: false
+    },
+    compareReserve: {
+      text: `The Reserve costs $550/yr vs. $95 but gives you a $300 annual travel credit — making the net cost roughly $250. In return you get 3x on all travel (vs. 2x), Priority Pass lounge access, and points worth 1.5¢ in the Chase portal instead of 1.25¢. If you travel frequently and value lounges, the Reserve pays off. For most people, the Preferred is the better starting point — you can always upgrade later.`,
+      sources: ['This article · TPG research', 'TPG valuations · Feb 2026'],
+      followUps: ["Is there a way to upgrade from Preferred to Reserve?", "Which card is better for international travel?", "Do both cards have the same transfer partners?"],
+      showCTA: true
+    },
+    transferPartners: {
+      text: `Chase has 14 transfer partners, all at 1:1. The standouts for flights: Air Canada Aeroplan (great for Star Alliance business class with no fuel surcharges), Singapore KrisFlyer, United MileagePlus, and British Airways Avios. For hotels, Hyatt is the clear winner — their points go much further than Marriott or IHG on a per-dollar basis.`,
+      sources: ['This article · TPG research'],
+      followUps: ["Which partner is best for a business class flight to Tokyo?", "How does Aeroplan compare to United for Star Alliance?", "Can I transfer to multiple programs?"],
+      showCTA: false
+    },
+    usePoints: {
+      text: `At 2.05¢ each, 80,000 points are worth ~$1,640. The best use: transfer to Aeroplan for a nonstop business class flight to Tokyo or Europe (75,000–90,000 points), or to Hyatt for 2 nights at a top-tier property. Using them in the Chase portal gets you 1.25¢/point — decent, but transfer partners almost always deliver better value.`,
+      sources: ['TPG valuations · Feb 2026', 'This article · TPG research'],
+      followUps: ["How do I search for Aeroplan award availability?", "What's the best Hyatt property for a points redemption?", "Can I book flights through Chase Travel instead?"],
+      showCTA: true
+    },
+    foreignFee: {
+      text: `No foreign transaction fees — this card is a solid travel companion internationally. You also get primary car rental collision coverage and trip cancellation/interruption insurance, which matters when booking overseas trips. The chip-and-PIN support works well at unmanned kiosks in Europe too.`,
+      sources: ['This article · TPG research'],
+      followUps: ["Does it include travel insurance for trip delays?", "What's the difference between primary and secondary rental car coverage?", "Is there an emergency assistance line?"],
+      showCTA: false
+    },
+    minSpend: {
+      text: `You need $4,000 in purchases within the first 3 months — that's about $1,333/month. The clock starts on account opening day, not when the card arrives. Most households hit this comfortably by putting groceries, dining, utilities, and regular bills on the card. Just avoid cash advances and balance transfers — those don't count.`,
+      sources: ['Card Snapshot', 'This article · TPG research'],
+      followUps: ["What happens if I don't meet the spend requirement?", "Do Chase's own travel portal purchases count?", "When will the bonus points post to my account?"],
+      showCTA: true
+    },
+    earning: {
+      text: `The card earns 3x on dining, online groceries, and streaming — so Netflix, Spotify, and your weekly Whole Foods run all rack up points fast. You get 2x on all travel (flights, hotels, Uber, parking), and 1x on everything else. For a typical household spending $600/month on dining and $500 on groceries, that's roughly 3,700 extra points per month beyond base earning.`,
+      sources: ['Card Snapshot', 'This article · TPG research'],
+      followUps: ["Does Instacart count as online grocery?", "Does Airbnb count as travel for 2x?", "What counts as 'dining' for the 3x category?"],
+      showCTA: false
+    },
+    hotelCredit: {
+      text: `The $50 hotel credit applies to hotel stays booked through Chase Ultimate Rewards — it posts as a statement credit once per cardmember year. That brings the effective annual fee down to $45 if you use it, which makes the math on this card even more favorable. It resets on your card anniversary date, not January 1.`,
+      sources: ['Card Snapshot', 'This article · TPG research'],
+      followUps: ["Which hotels are bookable through Chase Ultimate Rewards?", "Does the credit stack with other Chase credits?", "Does it apply to Hyatt bookings?"],
+      showCTA: false
+    },
+    singapore: {
+      text: `Singapore Airlines KrisFlyer is one of Chase's best partners for premium cabin awards. Business class between the US and Asia runs 86,000–95,000 KrisFlyer miles for long-haul routes, and Singapore's product — particularly on the A380 — is consistently ranked best in class. The catch: fuel surcharges can run $400–600 each way. If you want to avoid surcharges, Aeroplan or ANA miles on the same routes often offer better total cost.`,
+      sources: ['This article · TPG research', 'TPG valuations · Feb 2026'],
+      followUps: ["How do I find Singapore Airlines award space?", "What's the difference between KrisFlyer Saver and Standard?", "Is Aeroplan a better option for Japan flights?"],
+      showCTA: false
+    },
+    fallback: {
+      text: `That's a good question — it goes a bit beyond what this specific article covers. Based on general TPG research, I'd recommend checking TPG's full guide on that topic for a deeper answer. What I can tell you from this article is that the Sapphire Preferred's 80,000-point bonus and 14 transfer partners give you a lot of flexibility once you're ready to redeem.`,
+      sources: ['This article · TPG research'],
+      followUps: ["What's the best use for 80,000 Chase points?", "Which transfer partner gives the most value?", "Is the annual fee worth it?"],
+      showCTA: false
+    }
+  };
+
+  const FOLLOW_UP_SETS = [
+    ["What's the best way to use 80,000 points?", "Which transfer partner gives the most value?", "Does it charge foreign transaction fees?"],
+    ["How much can I earn on groceries each month?", "How does the $50 hotel credit work?", "Is there a sign-up bonus spending requirement?"],
+    ["How do I transfer points to Singapore Airlines?", "What's the difference between this and the Reserve?", "Can I earn on streaming services?"]
+  ];
+
+  let followUpIndex = 0;
+
+  function matchResponse(q) {
+    const t = q.toLowerCase();
+    if (/(annual fee|worth it|fee worth|justify)/.test(t)) return RESPONSES.annualFee;
+    if (/(hyatt|transfer.*point|point.*transfer|world of hyatt)/.test(t)) return RESPONSES.hyattTransfer;
+    if (/(reserve|compare|vs\.?|versus|difference|upgrade)/.test(t)) return RESPONSES.compareReserve;
+    if (/(airline|transfer partner|krisflyer|aeroplan|united|british|partner)/.test(t) && !/(hyatt|hotel)/.test(t)) return RESPONSES.transferPartners;
+    if (/(80,000|80000|bonus|use.*points|redeem|what.*worth|best redemption)/.test(t)) return RESPONSES.usePoints;
+    if (/(foreign|international|overseas|abroad|europe|japan|tokyo)/.test(t) && !/(singapore|business class)/.test(t)) return RESPONSES.foreignFee;
+    if (/(minimum spend|spend requirement|\$4,000|4000|how much.*spend|spend.*requirement)/.test(t)) return RESPONSES.minSpend;
+    if (/(earn|earning rate|dining|grocery|groceries|streaming|category|3x|2x)/.test(t)) return RESPONSES.earning;
+    if (/(hotel credit|\$50|fifty dollar|hotel.*benefit)/.test(t)) return RESPONSES.hotelCredit;
+    if (/(singapore|business class|premium cabin|first class|lie.flat)/.test(t)) return RESPONSES.singapore;
+    return RESPONSES.fallback;
+  }
+
+  // ── UI HELPERS ──
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function askSuggested(btn) {
+    document.getElementById('chatInput').value = btn.textContent.trim();
+    sendMessage();
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Stream text character by character into an element
+  async function streamText(el, text) {
+    for (let i = 1; i <= text.length; i++) {
+      el.textContent = text.slice(0, i);
+      await sleep(14);
+    }
+  }
+
+  // Append a user or AI message bubble
+  function appendUserMsg(text) {
+    const container = document.getElementById('messages');
+    const wrap = document.createElement('div');
+    wrap.className = 'msg user';
+    wrap.innerHTML = `<div class="msg-avatar user">Y</div><div><div class="msg-bubble">${text}</div></div>`;
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showTyping() {
+    const container = document.getElementById('messages');
+    const wrap = document.createElement('div');
+    wrap.className = 'msg ai'; wrap.id = 'typing-msg';
+    wrap.innerHTML = `<div class="msg-avatar ai">T</div><div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing-msg');
+    if (t) t.remove();
+  }
+
+  async function appendAIMsg(response) {
+    const container = document.getElementById('messages');
+
+    // Build the wrapper
+    const wrap = document.createElement('div');
+    wrap.className = 'msg ai';
+
+    const bubbleEl = document.createElement('div');
+    bubbleEl.className = 'msg-bubble';
+
+    const sourceHTML = response.sources.map(s =>
+      `<span class="source-pill" title="Source: ${s}">📄 ${s}<span class="dd-tooltip">This answer draws from: <strong>${s}</strong>. TPG only surfaces verified, CMS-tracked data in chat responses.</span></span>`
+    ).join('');
+
+    const ctaHTML = response.showCTA
+      ? `<div style="margin-top:8px"><button class="msg-cta">Apply for this card →</button></div>`
+      : '';
+
+    wrap.innerHTML = `
+      <div class="msg-avatar ai">T</div>
+      <div>
+        <div class="msg-bubble"></div>
+        <div class="msg-footer">${sourceHTML}</div>
+        ${ctaHTML}
+      </div>`;
+
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+
+    // Stream text into the bubble
+    const bubble = wrap.querySelector('.msg-bubble');
+    await streamText(bubble, response.text);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showFollowUps(questions) {
+    const el = document.getElementById('suggested');
+    el.innerHTML = `
+      <div class="suggested-label">
+        Follow-up questions
+        <span class="dd-marker">i<span class="dd-tooltip">In production, follow-up suggestions are generated by the CMS based on what readers typically ask next on this article. Powered by question analytics.</span></span>
+      </div>
+      ${questions.map(q => `<button class="suggested-q" onclick="askSuggested(this)">${q}</button>`).join('')}`;
+    el.style.display = 'flex';
+  }
+
+  // ── MAIN SEND ──
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const btn = document.getElementById('sendBtn');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    btn.disabled = true;
+    document.getElementById('suggested').style.display = 'none';
+
+    appendUserMsg(text);
+    showTyping();
+
+    // Simulate network + thinking delay (1.2–1.8s)
+    await sleep(1200 + Math.random() * 600);
+    removeTyping();
+
+    const response = matchResponse(text);
+    await appendAIMsg(response);
+
+    // Show follow-up suggestions
+    if (response.followUps && response.followUps.length) {
+      showFollowUps(response.followUps);
+    } else {
+      const fallbackSet = FOLLOW_UP_SETS[followUpIndex % FOLLOW_UP_SETS.length];
+      followUpIndex++;
+      showFollowUps(fallbackSet);
+    }
+
+    btn.disabled = false;
+    input.focus();
+  }
+
+  // ── CMS MODAL ──
+  const CMS_TABS = {
+    fields: `
+      <div class="fields-grid">
+        <div class="field-card"><div class="field-key">_type</div><div class="field-val">"article"</div></div>
+        <div class="field-card"><div class="field-key">_id</div><div class="field-val" style="font-family:'DM Mono',monospace;font-size:11px">"csp-review-2026"</div></div>
+        <div class="field-card"><div class="field-key">title</div><div class="field-val">"Chase Sapphire Preferred Card Review: Best Mid-Tier Travel Card of 2026"</div></div>
+        <div class="field-card"><div class="field-key">category →</div><div class="field-val">"Credit Cards"</div></div>
+        <div class="field-card"><div class="field-key">author →</div><div class="field-val">{name: "Ryan Smith"}</div></div>
+        <div class="field-card"><div class="field-key">_updatedAt</div><div class="field-val" style="font-family:'DM Mono',monospace;font-size:11px">"2026-03-15T09:22:00Z"</div></div>
+        <div class="field-card"><div class="field-key">lastReviewedAt</div><div class="field-val" style="font-family:'DM Mono',monospace;font-size:11px">"2026-03-15T09:22:00Z"</div></div>
+        <div class="field-card"><div class="field-key">offerExpiration</div><div class="field-val" style="font-family:'DM Mono',monospace;font-size:11px">"2026-06-30T23:59:00Z"</div></div>
+        <div class="field-card"><div class="field-key">affiliateLinkStatus</div><div class="field-val ok">✓ "ok"</div></div>
+        <div class="field-card"><div class="field-key">pointValuationVerified</div><div class="field-val ok">✓ true</div></div>
+        <div class="field-card"><div class="field-key">stalenessScore</div><div class="field-val ok">12 / 100 (healthy)</div></div>
+        <div class="field-card"><div class="field-key">welcomeBonus</div><div class="field-val">80000</div></div>
+        <div class="field-card"><div class="field-key">annualFee</div><div class="field-val">95</div></div>
+        <div class="field-card"><div class="field-key">tpgValuation</div><div class="field-val">2.05  <span style="font-size:11px;color:#aaa">(¢/pt · Feb 2026)</span></div></div>
+        <div class="field-card"><div class="field-key">hotelCredit</div><div class="field-val">50</div></div>
+        <div class="field-card"><div class="field-key">earningRates</div><div class="field-val" style="font-family:'DM Mono',monospace;font-size:11px">{dining:3, groceries:3, travel:2, streaming:3, other:1}</div></div>
+        <div class="field-card" style="grid-column:span 2"><div class="field-key">transferPartners[]  <span style="color:#aaa;font-weight:400">(14 programs)</span></div><div class="field-val tag-list"><span class="field-tag">United MileagePlus</span><span class="field-tag">Air Canada Aeroplan</span><span class="field-tag">World of Hyatt</span><span class="field-tag">Singapore KrisFlyer</span><span class="field-tag">British Airways Avios</span><span class="field-tag">Southwest Rapid Rewards</span><span class="field-tag">Emirates Skywards</span><span class="field-tag">Air France-KLM</span><span class="field-tag">Iberia Avios</span><span class="field-tag">Virgin Atlantic</span><span class="field-tag">IHG Rewards</span><span class="field-tag">Marriott Bonvoy</span><span class="field-tag">+ 2 more</span></div></div>
+        <div class="field-card" style="grid-column:span 2"><div class="field-key">tags[]</div><div class="field-val tag-list"><span class="field-tag">chase</span><span class="field-tag">credit-cards</span><span class="field-tag">sapphire-preferred</span><span class="field-tag">chase-ultimate-rewards</span><span class="field-tag">travel-rewards</span><span class="field-tag">mid-tier</span></div></div>
+      </div>
+      <div class="cms-dd-note">
+        <strong>PM insight:</strong> These structured fields are what make the AI chat trustworthy rather than generic. The <code style="font-family:'DM Mono',monospace;font-size:11px">offerExpiration</code>, <code style="font-family:'DM Mono',monospace;font-size:11px">tpgValuation</code>, and <code style="font-family:'DM Mono',monospace;font-size:11px">pointValuationVerified</code> fields are maintained by automated Sanity Functions — they update automatically when conditions change, without requiring editorial intervention.
+      </div>`,
+
+    context: `<div class="system-prompt-block"><span class="sp-comment">// System prompt passed to claude-sonnet-4-20250514
+// Assembled dynamically from Sanity fields at query time
+// In production, this is generated server-side — never exposed to the client</span>
+
+<span class="sp-key">role:</span> <span class="sp-val">"TPG contextual assistant — Chase Sapphire Preferred review page"</span>
+
+<span class="sp-key">instruction:</span>
+  Answer questions conversationally based only on the verified article content
+  below. Be specific, cite numbers when relevant. Warm and direct tone — like a
+  knowledgeable friend who knows points. 2–3 sentences max per response.
+  No bullet points. If the question goes beyond the article, say so clearly
+  and direct the reader to relevant TPG guides rather than guessing.
+
+<span class="sp-key">verified_article_content:</span> <span class="sp-val">(as of 2026-03-15)</span>
+  <span class="sp-key">card:</span>             <span class="sp-val">Chase Sapphire Preferred® Card</span>
+  <span class="sp-key">welcome_bonus:</span>    <span class="sp-val">80,000 Chase UR points after $4,000 spend in 3 months</span>
+  <span class="sp-key">offer_expiration:</span>  <span class="sp-val">June 30, 2026</span>
+  <span class="sp-key">annual_fee:</span>       <span class="sp-val">$95</span>
+  <span class="sp-key">hotel_credit:</span>     <span class="sp-val">$50/yr (bookings via Chase UR portal)</span>
+  <span class="sp-key">tpg_valuation:</span>    <span class="sp-val">2.05¢/pt (verified Feb 2026)</span>
+  <span class="sp-key">bonus_value:</span>      <span class="sp-val">~$1,640 (17x annual fee in year one)</span>
+  <span class="sp-key">earning_rates:</span>    <span class="sp-val">3x dining / online grocery / streaming</span>
+                    <span class="sp-val">2x all travel · 1x everything else</span>
+  <span class="sp-key">transfer_partners:</span> <span class="sp-val">14 (United, Hyatt, Singapore, Aeroplan, + 10 more)</span>
+  <span class="sp-key">hyatt_sweet_spot:</span>  <span class="sp-val">35,000–45,000 pts/night at top-tier properties</span>
+  <span class="sp-key">best_for:</span>         <span class="sp-val">First-time travel rewards; kept by experienced travelers</span>
+
+<span class="sp-comment">// Guardrails
+// - Do not give specific financial or tax advice
+// - Do not quote approval odds or credit score requirements
+// - Do not reference competitor products unless directly asked for comparison
+// - Always route toward action (apply, transfer, book) where appropriate</span></div>
+      <div class="cms-dd-note">
+        <strong>PM insight:</strong> The system prompt is assembled dynamically from Sanity fields — not hardcoded. When a Sanity Function detects that <code style="font-family:'DM Mono',monospace;font-size:11px">pointValuationVerified</code> flips to <code>false</code>, the context is rebuilt with a staleness warning before it reaches Claude. This is the CMS layer making AI chat trustworthy.
+      </div>`,
+
+    groq: `<div class="groq-block"><span class="g-comment">// GROQ query — retrieves this article's structured context for the chat
+// Runs server-side on each chat session init via Sanity Content Lake</span>
+
+<span class="g-fn">*</span>[<span class="g-field">_type</span> == <span class="g-str">"article"</span> && <span class="g-field">slug.current</span> == <span class="g-str">"chase-sapphire-preferred-card-review"</span>][0] {
+  <span class="g-field">title</span>,
+  <span class="g-field">_updatedAt</span>,
+  <span class="g-field">lastReviewedAt</span>,
+  <span class="g-field">offerExpiration</span>,
+  <span class="g-field">welcomeBonus</span>,
+  <span class="g-field">annualFee</span>,
+  <span class="g-field">hotelCredit</span>,
+  <span class="g-field">tpgValuation</span>,
+  <span class="g-field">pointValuationVerified</span>,
+  <span class="g-field">affiliateLinkStatus</span>,
+  <span class="g-field">stalenessScore</span>,
+  <span class="g-field">earningRates</span>,
+  <span class="g-str">"author"</span>: <span class="g-field">author</span>->{ <span class="g-field">name</span> },
+  <span class="g-str">"category"</span>: <span class="g-field">category</span>-><span class="g-field">title</span>,
+  <span class="g-str">"transferPartners"</span>: <span class="g-field">transferPartners</span>[]->{ <span class="g-field">name</span>, <span class="g-field">programType</span> },
+  <span class="g-str">"suggestedQuestions"</span>: <span class="g-field">suggestedQuestions</span>[],
+  <span class="g-str">"bodyText"</span>: <span class="g-fn">pt::text</span>(<span class="g-field">body</span>)
+}
+
+<span class="g-comment">// The bodyText projection uses Sanity's pt::text() function to extract
+// plain text from Portable Text blocks — stripping formatting for the
+// Claude context window. Chunking into ~400-token segments happens
+// in the middleware layer, not in GROQ.</span>
+
+<span class="g-comment">// Staleness check: if stalenessScore > 60 or pointValuationVerified == false,
+// the middleware injects a warning into the system prompt:
+// "Note: some data fields in this article may be outdated. Flag this to the user
+// if they ask about specific valuations or offer details."</span></div>
+      <div class="cms-dd-note">
+        <strong>PM insight:</strong> This is the prototype's hardcoded context replaced by a live query. The <code style="font-family:'DM Mono',monospace;font-size:11px">pt::text(body)</code> projection is what converts Sanity's Portable Text rich-text format into plain text suitable for a Claude system prompt — a small but real implementation detail worth knowing.
+      </div>`
+  };
+
+  let activeCMSTab = 'fields';
+
+  function openCMS() {
+    document.getElementById('cmsOverlay').classList.add('open');
+    document.getElementById('cmsBody').innerHTML = CMS_TABS.fields;
+  }
+  function closeCMS() { document.getElementById('cmsOverlay').classList.remove('open'); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('cmsOverlay')) closeCMS(); }
+
+  function switchCMSTab(btn, tab) {
+    document.querySelectorAll('.cms-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    activeCMSTab = tab;
+    document.getElementById('cmsBody').innerHTML = CMS_TABS[tab];
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPG Content Health Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f0ede6;
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    /* ── TOP HEADER ── */
+    .top-bar {
+      background: #1a1a1a;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      height: 48px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-logo { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #fff; }
+    .top-divider { width: 1px; height: 18px; background: #333; }
+    .top-title { font-size: 13px; font-weight: 600; color: #ccc; }
+    .top-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .sync-info { font-size: 11px; color: #666; }
+    .sync-info span { color: #4ade80; }
+    .sanity-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      background: rgba(224,92,48,0.15); color: #e05c30;
+      border: 1px solid rgba(224,92,48,0.3); border-radius: 20px; padding: 3px 8px;
+    }
+    .sanity-dot { width: 5px; height: 5px; border-radius: 50%; background: #e05c30; }
+    .proto-badge {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      background: rgba(196,30,58,0.2); color: #f08090; border: 1px solid rgba(196,30,58,0.3);
+      border-radius: 20px; padding: 3px 10px;
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      background: #fff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 0 28px;
+      display: flex;
+      gap: 0;
+    }
+    .stat-cell {
+      padding: 16px 28px 14px;
+      border-right: 1px solid #e8e5de;
+      flex: 1;
+    }
+    .stat-cell:first-child { padding-left: 0; }
+    .stat-cell:last-child { border-right: none; }
+    .stat-label { font-size: 10.5px; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+    .stat-val { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; color: #1a1a1a; line-height: 1; margin-bottom: 3px; }
+    .stat-val.red { color: #C41E3A; }
+    .stat-val.amber { color: #c47a1a; }
+    .stat-val.green { color: #1a7c45; }
+    .stat-sub { font-size: 11px; color: #aaa; }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      display: flex;
+      height: calc(100vh - 48px - 67px);
+      min-height: 500px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e0ddd6;
+      padding: 18px 16px;
+      overflow-y: auto;
+    }
+    .sidebar-section { margin-bottom: 20px; }
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #aaa; margin-bottom: 10px;
+    }
+    .filter-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 7px 10px;
+      border: none; background: none;
+      border-radius: 7px;
+      font-size: 12.5px; font-family: 'DM Sans', sans-serif;
+      color: #444; cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+    .filter-btn:hover { background: #f5f5f0; }
+    .filter-btn.active { background: #fde8ea; color: #C41E3A; font-weight: 600; }
+    .filter-count {
+      margin-left: auto;
+      background: #f0ede6; color: #888;
+      font-size: 10px; font-weight: 700;
+      border-radius: 20px; padding: 1px 7px;
+    }
+    .filter-btn.active .filter-count { background: #C41E3A; color: white; }
+
+    .flag-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* How it works toggle */
+    .how-toggle {
+      width: 100%;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 10px;
+      border: 1px solid #e0ddd6;
+      border-radius: 7px;
+      background: #faf9f7;
+      font-size: 11.5px; color: #555;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .how-toggle:hover { border-color: #e05c30; color: #e05c30; }
+
+    /* ── ARTICLE LIST ── */
+    .list-area {
+      flex: 1;
+      overflow-y: auto;
+      background: #f5f5f0;
+    }
+
+    .list-toolbar {
+      background: #fff;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .toolbar-count { font-size: 12.5px; color: #555; }
+    .toolbar-count strong { color: #1a1a1a; }
+    .toolbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .sort-select {
+      border: 1px solid #ddd; border-radius: 6px;
+      padding: 5px 10px; font-size: 12px;
+      font-family: 'DM Sans', sans-serif; color: #333;
+      outline: none; background: #fff;
+    }
+    .sort-select:focus { border-color: #C41E3A; }
+
+    .bulk-assign {
+      padding: 5px 12px;
+      background: #C41E3A; color: white;
+      border: none; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; display: none;
+      transition: opacity 0.15s;
+    }
+    .bulk-assign:hover { opacity: 0.88; }
+    .bulk-assign.visible { display: block; }
+
+    /* Article rows */
+    .article-row {
+      background: #fff;
+      border-bottom: 1px solid #ece9e2;
+      padding: 14px 20px;
+      display: grid;
+      grid-template-columns: 24px 40px 1fr auto 120px 100px 90px;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .article-row:hover { background: #fdf8f8; }
+    .article-row.selected { background: #fde8ea; border-left: 3px solid #C41E3A; }
+
+    .row-check input[type="checkbox"] { accent-color: #C41E3A; cursor: pointer; }
+
+    /* Priority score */
+    .priority-score {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .priority-score.critical { background: #fde8ea; color: #C41E3A; }
+    .priority-score.high { background: #fff4e6; color: #c47a1a; }
+    .priority-score.medium { background: #fffbe6; color: #8a7a00; }
+    .priority-score.low { background: #eafaf1; color: #1a7c45; }
+
+    .row-title {
+      min-width: 0;
+    }
+    .art-title {
+      font-size: 13px; font-weight: 600; color: #1a1a1a;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    .art-meta { font-size: 11px; color: #aaa; }
+
+    .row-flags {
+      display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .flag-pill {
+      font-size: 10px; font-weight: 600; padding: 2px 7px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .flag-pill.expired   { background: #fde8ea; color: #8b1a1a; }
+    .flag-pill.valuation { background: #fff4e6; color: #7a4f1a; }
+    .flag-pill.stale     { background: #fffbe6; color: #6b5f00; }
+    .flag-pill.affiliate { background: #fdf2ff; color: #6b1a8b; }
+    .flag-pill.seo       { background: #eaf3fa; color: #1a3a6b; }
+
+    .row-age { font-size: 11.5px; color: #888; text-align: center; }
+    .row-age .age-days { font-weight: 700; color: #1a1a1a; font-size: 13px; display: block; }
+    .row-age .age-label { font-size: 10px; }
+
+    .row-writer { font-size: 12px; color: #555; }
+    .writer-avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #e0ddd6; color: #555;
+      font-size: 9px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-right: 5px; vertical-align: middle;
+    }
+
+    .row-actions { display: flex; gap: 6px; }
+    .action-btn {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; border: 1px solid;
+      white-space: nowrap;
+      transition: all 0.12s;
+    }
+    .action-btn.assign {
+      background: #fff; color: #555; border-color: #ddd;
+    }
+    .action-btn.assign:hover { border-color: #C41E3A; color: #C41E3A; }
+    .action-btn.review {
+      background: #C41E3A; color: white; border-color: #C41E3A;
+    }
+    .action-btn.review:hover { opacity: 0.88; }
+
+    /* List header row */
+    .list-header {
+      background: #faf9f7;
+      border-bottom: 1px solid #e0ddd6;
+      padding: 8px 20px;
+      display: grid;
+      grid-template-columns: 24px 40px 1fr auto 120px 100px 90px;
+      gap: 12px;
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em; color: #aaa;
+    }
+
+    /* ── DETAIL PANEL ── */
+    .detail-panel {
+      width: 340px;
+      flex-shrink: 0;
+      background: #fff;
+      border-left: 1px solid #e0ddd6;
+      overflow-y: auto;
+      display: none;
+    }
+    .detail-panel.open { display: block; }
+
+    .detail-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #e8e5de;
+      position: sticky; top: 0; background: #fff; z-index: 5;
+    }
+    .detail-close {
+      font-size: 12px; color: #888; cursor: pointer;
+      background: none; border: none;
+      font-family: 'DM Sans', sans-serif;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 4px;
+    }
+    .detail-close:hover { color: #333; }
+    .detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 600; line-height: 1.3;
+      color: #1a1a1a; margin-bottom: 6px;
+    }
+    .detail-meta { font-size: 11.5px; color: #888; margin-bottom: 10px; }
+    .detail-score-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .detail-score {
+      font-size: 28px; font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .detail-score.critical { color: #C41E3A; }
+    .detail-score.high { color: #c47a1a; }
+    .detail-score.medium { color: #8a7a00; }
+    .detail-score.low { color: #1a7c45; }
+    .detail-score-label { font-size: 11px; color: #aaa; }
+
+    .detail-body { padding: 16px 20px; }
+
+    .detail-section { margin-bottom: 18px; }
+    .detail-section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: #aaa; margin-bottom: 10px;
+    }
+
+    .issue-card {
+      border: 1px solid #e0ddd6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .issue-card.critical-border { border-color: #f5c6bc; border-left: 3px solid #C41E3A; }
+    .issue-card.amber-border { border-color: #f5e0bc; border-left: 3px solid #c47a1a; }
+    .issue-card.yellow-border { border-color: #e8e0b0; border-left: 3px solid #a09000; }
+    .issue-card.purple-border { border-color: #e0c8f0; border-left: 3px solid #8b1aaf; }
+    .issue-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+    .issue-flag-label { font-size: 11px; font-weight: 700; }
+    .issue-detail { font-size: 11.5px; color: #555; line-height: 1.5; }
+    .issue-cta { font-size: 11px; color: #C41E3A; font-weight: 600; margin-top: 6px; cursor: pointer; }
+
+    .detail-meta-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .meta-cell {
+      background: #faf9f7; border-radius: 7px; padding: 10px;
+    }
+    .meta-cell-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+    .meta-cell-val { font-size: 12.5px; font-weight: 600; color: #1a1a1a; }
+
+    .assign-select {
+      width: 100%; border: 1.5px solid #e0ddd6; border-radius: 8px;
+      padding: 9px 12px; font-size: 13px;
+      font-family: 'DM Sans', sans-serif; color: #1a1a1a;
+      background: #faf9f7; outline: none; margin-bottom: 8px;
+    }
+    .assign-select:focus { border-color: #C41E3A; }
+
+    .detail-actions { display: flex; gap: 8px; }
+    .detail-btn {
+      flex: 1; padding: 10px;
+      border-radius: 8px;
+      font-size: 12.5px; font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; border: 1.5px solid;
+      transition: all 0.12s;
+    }
+    .detail-btn.primary { background: #C41E3A; color: white; border-color: #C41E3A; }
+    .detail-btn.primary:hover { opacity: 0.88; }
+    .detail-btn.secondary { background: #fff; color: #555; border-color: #ddd; }
+    .detail-btn.secondary:hover { border-color: #888; color: #333; }
+
+    .studio-link {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11.5px; color: #e05c30; font-weight: 600;
+      margin-top: 12px; cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── HOW IT WORKS MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #1a1a1a;
+      border-radius: 12px;
+      width: 100%; max-width: 680px;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #2a2a2a;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 14px; font-weight: 700; color: #fff; }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #2a2a2a; color: #888;
+      border: none; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { color: #fff; }
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 0 24px;
+    }
+    .modal-tab {
+      padding: 10px 0;
+      margin-right: 24px;
+      font-size: 12.5px; color: #666;
+      cursor: pointer; border: none; background: none;
+      font-family: 'DM Sans', sans-serif;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s;
+    }
+    .modal-tab.active { color: #e05c30; border-bottom-color: #e05c30; font-weight: 600; }
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .code-block {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #ccc;
+      white-space: pre;
+    }
+    .code-block .comment { color: #555; }
+    .code-block .keyword { color: #c792ea; }
+    .code-block .string { color: #c3e88d; }
+    .code-block .type { color: #82aaff; }
+    .code-block .fn { color: #82aaff; }
+    .code-block .field { color: #f07178; }
+    .code-block .val { color: #ffcb6b; }
+
+    .schema-note {
+      font-size: 11.5px; color: #666; line-height: 1.6;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px solid #2a2a2a;
+    }
+    .schema-note span { color: #e05c30; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a7c45; color: white;
+      padding: 10px 16px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      z-index: 300; opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ── DD TOOLTIP ── */
+    .dd-marker {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #e8e5de; color: #888;
+      font-size: 9px; font-weight: 700;
+      cursor: help; position: relative; vertical-align: middle; margin-left: 3px;
+    }
+    .dd-marker:hover .dd-tooltip { display: block; }
+    .dd-tooltip {
+      display: none;
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a; color: #fff;
+      font-size: 11px; line-height: 1.5;
+      padding: 8px 12px; border-radius: 7px;
+      width: 220px; z-index: 200;
+      font-weight: 400; pointer-events: none;
+    }
+    .dd-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span class="top-logo">The Points Guy</span>
+  <div class="top-divider"></div>
+  <span class="top-title">Content Health Dashboard</span>
+  <div class="top-right">
+    <span class="sync-info">Last synced <span>2 min ago</span></span>
+    <span class="sanity-badge"><span class="sanity-dot"></span>Sanity CMS</span>
+    <span class="proto-badge">Prototype</span>
+  </div>
+</div>
+
+<!-- STATS ROW -->
+<div class="stats-row">
+  <div class="stat-cell">
+    <div class="stat-label">Articles monitored</div>
+    <div class="stat-val">847</div>
+    <div class="stat-sub">Across all categories</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Critical
+      <span class="dd-marker">i<span class="dd-tooltip">Score 80+: expired offers, broken affiliate links, or valuations that have changed since last publish.</span></span>
+    </div>
+    <div class="stat-val red" id="statCritical">0</div>
+    <div class="stat-sub">Needs immediate attention</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Needs review</div>
+    <div class="stat-val amber" id="statNeeds">0</div>
+    <div class="stat-sub">Score 40–79</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Reviewed this week</div>
+    <div class="stat-val green">12</div>
+    <div class="stat-sub">↑ 4 vs last week</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-label">Healthy</div>
+    <div class="stat-val green" id="statHealthy">0</div>
+    <div class="stat-sub">Score &lt; 40, no flags</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Filter by status</div>
+      <button class="filter-btn active" onclick="setFilter('all', this)">
+        All articles <span class="filter-count" id="fc-all">15</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('critical', this)">
+        🔴 Critical <span class="filter-count" id="fc-critical">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('high', this)">
+        🟠 High <span class="filter-count" id="fc-high">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('medium', this)">
+        🟡 Needs review <span class="filter-count" id="fc-medium">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('healthy', this)">
+        🟢 Healthy <span class="filter-count" id="fc-healthy">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Filter by flag</div>
+      <button class="filter-btn" onclick="setFlagFilter('expired', this)">
+        <span class="flag-dot" style="background:#C41E3A"></span>
+        Offer expired <span class="filter-count" id="fc-expired">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFlagFilter('valuation', this)">
+        <span class="flag-dot" style="background:#c47a1a"></span>
+        Valuation changed <span class="filter-count" id="fc-valuation">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFlagFilter('stale', this)">
+        <span class="flag-dot" style="background:#a09000"></span>
+        Stale content <span class="filter-count" id="fc-stale">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFlagFilter('affiliate', this)">
+        <span class="flag-dot" style="background:#8b1aaf"></span>
+        Broken affiliate <span class="filter-count" id="fc-affiliate">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFlagFilter('seo', this)">
+        <span class="flag-dot" style="background:#1a3a6b"></span>
+        SEO decay <span class="filter-count" id="fc-seo">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Category</div>
+      <button class="filter-btn" onclick="setCatFilter('all-cat', this)">All categories</button>
+      <button class="filter-btn" onclick="setCatFilter('Credit Cards', this)">Credit Cards</button>
+      <button class="filter-btn" onclick="setCatFilter('Loyalty Programs', this)">Loyalty Programs</button>
+      <button class="filter-btn" onclick="setCatFilter('Travel', this)">Travel</button>
+      <button class="filter-btn" onclick="setCatFilter('News', this)">News</button>
+    </div>
+
+    <div class="sidebar-section">
+      <button class="how-toggle" onclick="openModal()">
+        <span class="sanity-dot"></span>
+        How this works →
+      </button>
+    </div>
+  </aside>
+
+  <!-- LIST AREA -->
+  <div class="list-area" id="listArea">
+    <div class="list-toolbar">
+      <span class="toolbar-count" id="toolbarCount"><strong>15</strong> articles</span>
+      <div class="toolbar-right">
+        <button class="bulk-assign" id="bulkBtn" onclick="showToast('Assigned 0 articles')">Assign selected</button>
+        <select class="sort-select" id="sortSelect" onchange="renderList()">
+          <option value="score">Sort: Priority score</option>
+          <option value="age">Sort: Oldest first</option>
+          <option value="title">Sort: Title A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="list-header">
+      <div></div>
+      <div>Score</div>
+      <div>Article</div>
+      <div>Flags</div>
+      <div style="text-align:center">Last updated</div>
+      <div>Writer</div>
+      <div>Actions</div>
+    </div>
+
+    <div id="articleRows"></div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detailPanel">
+    <div id="detailContent"></div>
+  </div>
+
+</div>
+
+<!-- HOW IT WORKS MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleModalClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">How this dashboard works — Sanity CMS integration</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab(this,'groq')">GROQ Query</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'schema')">Sanity Schema</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'arch')">Architecture</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── DATA ──
+  const ARTICLES = [
+    {
+      id: 1, title: 'Chase Sapphire Preferred Card Review', category: 'Credit Cards', writer: 'Ryan Smith',
+      daysSince: 112, score: 94, tier: 'critical',
+      flags: ['expired','valuation'],
+      issues: {
+        expired: 'The 60,000-point welcome offer listed in this article expired Dec 31, 2025. Current public offer is 80,000 points. Estimated value figures are understated by ~$410.',
+        valuation: 'TPG\'s Chase UR valuation increased from 2.0¢ to 2.05¢ on Feb 3, 2026. The "$1,230 bonus value" figure should be updated to ~$1,640.'
+      }
+    },
+    {
+      id: 2, title: 'Amex Platinum Card Review 2025', category: 'Credit Cards', writer: 'Sarah Lee',
+      daysSince: 88, score: 89, tier: 'critical',
+      flags: ['expired'],
+      issues: {
+        expired: 'The 150,000-point welcome offer expired Jan 15, 2026. Current offer is 80,000 points. This is a significant discrepancy that could mislead readers and reduce affiliate conversion.'
+      }
+    },
+    {
+      id: 3, title: 'Southwest Companion Pass: Complete Guide', category: 'Loyalty Programs', writer: 'Mike Torres',
+      daysSince: 76, score: 81, tier: 'critical',
+      flags: ['expired','stale'],
+      issues: {
+        expired: 'The 2025 Companion Pass qualification threshold details referenced in this article have changed for 2026.',
+        stale: 'Article has not been reviewed in 76 days. Southwest program changes in Q4 2025 may not be reflected.'
+      }
+    },
+    {
+      id: 4, title: 'United MileagePlus: The Complete Guide', category: 'Loyalty Programs', writer: 'Jess Park',
+      daysSince: 134, score: 86, tier: 'critical',
+      flags: ['stale','seo'],
+      issues: {
+        stale: 'Last reviewed 134 days ago. United\'s January 2026 elite status changes and PlusPoints restructuring are not reflected.',
+        seo: 'Organic traffic down 41% vs 90-day average. Primary keyword "united mileageplus guide" dropped from position 3 to 7 in the past 60 days.'
+      }
+    },
+    {
+      id: 5, title: 'Delta SkyMiles Redemption Guide', category: 'Loyalty Programs', writer: 'Ryan Smith',
+      daysSince: 97, score: 83, tier: 'critical',
+      flags: ['valuation','affiliate'],
+      issues: {
+        valuation: 'TPG\'s Delta SkyMiles valuation dropped from 1.41¢ to 1.20¢ in January 2026 due to dynamic pricing expansion. All estimated values in this article are overstated.',
+        affiliate: '2 of 4 affiliate links returning 404 errors. Delta credit card application links appear to have been rotated — new affiliate URLs needed.'
+      }
+    },
+    {
+      id: 6, title: 'Marriott Bonvoy Points: Are They Worth It?', category: 'Loyalty Programs', writer: 'Ana Costa',
+      daysSince: 105, score: 75, tier: 'high',
+      flags: ['valuation','stale'],
+      issues: {
+        valuation: 'Marriott Bonvoy valuation changed from 0.9¢ to 0.84¢ in the Feb 2026 monthly update. Value figures throughout need refreshing.',
+        stale: 'Article was last reviewed 105 days ago. Several Category changes introduced in late 2025 are not mentioned.'
+      }
+    },
+    {
+      id: 7, title: 'Best Credit Cards of 2025', category: 'Credit Cards', writer: 'Sarah Lee',
+      daysSince: 58, score: 78, tier: 'high',
+      flags: ['stale'],
+      issues: {
+        stale: 'Title still references 2025. Article requires full refresh for 2026 and should be migrated to the Best Credit Cards of 2026 URL pattern.'
+      }
+    },
+    {
+      id: 8, title: 'Hyatt Transfer Partners: Full Guide', category: 'Loyalty Programs', writer: 'Mike Torres',
+      daysSince: 83, score: 71, tier: 'high',
+      flags: ['valuation'],
+      issues: {
+        valuation: 'TPG\'s Hyatt valuation increased from 1.7¢ to 1.72¢. Minor change but article references "up to 1.7¢" as the benchmark figure.'
+      }
+    },
+    {
+      id: 9, title: 'Chase Freedom Unlimited: In-Depth Review', category: 'Credit Cards', writer: 'Jess Park',
+      daysSince: 44, score: 70, tier: 'high',
+      flags: ['affiliate'],
+      issues: {
+        affiliate: 'Primary "Apply Now" affiliate link returning a redirect to Chase homepage instead of card application page. Likely URL rotation — needs new tracking link.'
+      }
+    },
+    {
+      id: 10, title: 'Best Business Credit Cards 2025', category: 'Credit Cards', writer: 'Ana Costa',
+      daysSince: 91, score: 60, tier: 'medium',
+      flags: ['stale','seo'],
+      issues: {
+        stale: 'Last reviewed 91 days ago. Amex Business Gold earn rate changes from Dec 2025 are not reflected.',
+        seo: 'Organic traffic down 22% vs 90-day average. "best business credit cards" ranking slipped from position 5 to 8.'
+      }
+    },
+    {
+      id: 11, title: 'Travel Credit Cards for Beginners', category: 'Credit Cards', writer: 'Ryan Smith',
+      daysSince: 67, score: 55, tier: 'medium',
+      flags: ['stale'],
+      issues: {
+        stale: 'Welcome offer data for 3 of 6 recommended cards is outdated. Recommended card order may need adjustment given recent valuation changes.'
+      }
+    },
+    {
+      id: 12, title: 'How to Transfer Amex Points to Airlines', category: 'Loyalty Programs', writer: 'Sarah Lee',
+      daysSince: 142, score: 45, tier: 'medium',
+      flags: ['stale'],
+      issues: {
+        stale: 'Transfer ratio information for 2 partners (Air Canada Aeroplan, Virgin Atlantic) has changed since last publish. No expired offers, but content is 142 days old.'
+      }
+    },
+    {
+      id: 13, title: 'Alaska Mileage Plan: Complete Guide 2025', category: 'Loyalty Programs', writer: 'Mike Torres',
+      daysSince: 38, score: 40, tier: 'medium',
+      flags: ['stale'],
+      issues: {
+        stale: 'Article approaching the 45-day review threshold. No critical issues, but scheduled for periodic review.'
+      }
+    },
+    {
+      id: 14, title: 'Capital One Venture X Card Review', category: 'Credit Cards', writer: 'Jess Park',
+      daysSince: 18, score: 12, tier: 'healthy',
+      flags: [],
+      issues: {}
+    },
+    {
+      id: 15, title: 'Best Hotels in Tokyo 2025', category: 'Travel', writer: 'Ana Costa',
+      daysSince: 55, score: 34, tier: 'healthy',
+      flags: [],
+      issues: {}
+    },
+  ];
+
+  const WRITERS = ['Ryan Smith', 'Sarah Lee', 'Mike Torres', 'Jess Park', 'Ana Costa'];
+  const FLAG_LABELS = { expired:'Offer expired', valuation:'Valuation changed', stale:'Stale', affiliate:'Broken affiliate', seo:'SEO decay' };
+
+  let activeFilter = 'all';
+  let activeFlagFilter = null;
+  let activeCatFilter = 'all-cat';
+  let selectedId = null;
+  let checkedIds = new Set();
+
+  // ── RENDER STATS ──
+  function renderStats() {
+    const critical = ARTICLES.filter(a => a.tier === 'critical').length;
+    const needs = ARTICLES.filter(a => ['high','medium'].includes(a.tier)).length;
+    const healthy = ARTICLES.filter(a => a.tier === 'healthy').length;
+    document.getElementById('statCritical').textContent = critical;
+    document.getElementById('statNeeds').textContent = needs;
+    document.getElementById('statHealthy').textContent = healthy;
+
+    document.getElementById('fc-all').textContent = ARTICLES.length;
+    document.getElementById('fc-critical').textContent = critical;
+    document.getElementById('fc-high').textContent = ARTICLES.filter(a => a.tier === 'high').length;
+    document.getElementById('fc-medium').textContent = ARTICLES.filter(a => a.tier === 'medium').length;
+    document.getElementById('fc-healthy').textContent = healthy;
+    document.getElementById('fc-expired').textContent = ARTICLES.filter(a => a.flags.includes('expired')).length;
+    document.getElementById('fc-valuation').textContent = ARTICLES.filter(a => a.flags.includes('valuation')).length;
+    document.getElementById('fc-stale').textContent = ARTICLES.filter(a => a.flags.includes('stale')).length;
+    document.getElementById('fc-affiliate').textContent = ARTICLES.filter(a => a.flags.includes('affiliate')).length;
+    document.getElementById('fc-seo').textContent = ARTICLES.filter(a => a.flags.includes('seo')).length;
+  }
+
+  // ── FILTER ──
+  function setFilter(val, btn) {
+    activeFilter = val;
+    activeFlagFilter = null;
+    document.querySelectorAll('.sidebar .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  }
+
+  function setFlagFilter(val, btn) {
+    activeFlagFilter = (activeFlagFilter === val) ? null : val;
+    activeFilter = 'all';
+    document.querySelectorAll('.sidebar .filter-btn').forEach(b => b.classList.remove('active'));
+    if (activeFlagFilter) btn.classList.add('active');
+    else document.querySelector('.filter-btn[onclick*="all"]').classList.add('active');
+    renderList();
+  }
+
+  function setCatFilter(val, btn) {
+    activeCatFilter = val;
+    document.querySelectorAll('.sidebar-section:nth-child(3) .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  }
+
+  function filteredArticles() {
+    const sort = document.getElementById('sortSelect').value;
+    let list = [...ARTICLES];
+
+    if (activeFilter !== 'all') list = list.filter(a => a.tier === activeFilter);
+    if (activeFlagFilter) list = list.filter(a => a.flags.includes(activeFlagFilter));
+    if (activeCatFilter !== 'all-cat') list = list.filter(a => a.category === activeCatFilter);
+
+    if (sort === 'score') list.sort((a, b) => b.score - a.score);
+    else if (sort === 'age') list.sort((a, b) => b.daysSince - a.daysSince);
+    else if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+
+    return list;
+  }
+
+  // ── RENDER LIST ──
+  function renderList() {
+    const list = filteredArticles();
+    document.getElementById('toolbarCount').innerHTML = `<strong>${list.length}</strong> article${list.length !== 1 ? 's' : ''}`;
+
+    const tierColors = { critical:'#C41E3A', high:'#c47a1a', medium:'#a09000', healthy:'#1a7c45' };
+    const rows = document.getElementById('articleRows');
+    rows.innerHTML = list.map(a => {
+      const initials = a.writer.split(' ').map(w=>w[0]).join('');
+      return `
+        <div class="article-row ${selectedId === a.id ? 'selected' : ''}" onclick="selectArticle(${a.id})">
+          <div class="row-check" onclick="event.stopPropagation()">
+            <input type="checkbox" ${checkedIds.has(a.id)?'checked':''} onchange="toggleCheck(${a.id}, this)" />
+          </div>
+          <div class="priority-score ${a.tier}" title="Priority score: ${a.score}">${a.score}</div>
+          <div class="row-title">
+            <div class="art-title">${a.title}</div>
+            <div class="art-meta">${a.category}</div>
+          </div>
+          <div class="row-flags">
+            ${a.flags.map(f => `<span class="flag-pill ${f}">${FLAG_LABELS[f]}</span>`).join('')}
+            ${a.flags.length === 0 ? '<span style="font-size:11px;color:#aaa">No flags</span>' : ''}
+          </div>
+          <div class="row-age">
+            <span class="age-days">${a.daysSince}d</span>
+            <span class="age-label">ago</span>
+          </div>
+          <div class="row-writer">
+            <span class="writer-avatar">${initials}</span>${a.writer.split(' ')[0]}
+          </div>
+          <div class="row-actions" onclick="event.stopPropagation()">
+            <button class="action-btn assign" onclick="showToast('Assigned to queue')">Assign</button>
+            <button class="action-btn review" onclick="markReviewed(${a.id})">Review</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleCheck(id, el) {
+    if (el.checked) checkedIds.add(id);
+    else checkedIds.delete(id);
+    const btn = document.getElementById('bulkBtn');
+    btn.classList.toggle('visible', checkedIds.size > 0);
+    btn.textContent = `Assign ${checkedIds.size} selected`;
+  }
+
+  function markReviewed(id) {
+    showToast('Marked as reviewed — removed from queue');
+    const row = document.getElementById('articleRows').querySelector(`[onclick="selectArticle(${id})"]`);
+    if (row) { row.style.opacity = '0.3'; row.style.pointerEvents = 'none'; }
+    if (selectedId === id) closeDetail();
+  }
+
+  // ── DETAIL PANEL ──
+  function selectArticle(id) {
+    selectedId = id;
+    const a = ARTICLES.find(x => x.id === id);
+    const panel = document.getElementById('detailPanel');
+    panel.classList.add('open');
+    renderList();
+
+    const issueCards = a.flags.map(f => {
+      const borderClass = { expired:'critical-border', valuation:'amber-border', stale:'yellow-border', affiliate:'purple-border', seo:'affiliate-border' }[f] || '';
+      const icon = { expired:'🔴', valuation:'🟠', stale:'🟡', affiliate:'🟣', seo:'🔵' }[f] || '⚪';
+      return `
+        <div class="issue-card ${borderClass}">
+          <div class="issue-top">
+            <span>${icon}</span>
+            <span class="issue-flag-label">${FLAG_LABELS[f]}</span>
+          </div>
+          <div class="issue-detail">${a.issues[f] || ''}</div>
+          <div class="issue-cta">View in Sanity Studio →</div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-header">
+        <button class="detail-close" onclick="closeDetail()">← Back to list</button>
+        <div class="detail-title">${a.title}</div>
+        <div class="detail-meta">${a.category} · ${a.writer}</div>
+        <div class="detail-score-row">
+          <div class="detail-score ${a.tier}">${a.score}</div>
+          <div class="detail-score-label">Priority score<br><span style="font-size:10px;text-transform:uppercase;letter-spacing:.06em">${a.tier}</span></div>
+        </div>
+      </div>
+      <div class="detail-body">
+        ${a.flags.length > 0 ? `
+          <div class="detail-section">
+            <div class="detail-section-title">Issues (${a.flags.length})</div>
+            ${issueCards}
+          </div>` : `
+          <div class="detail-section">
+            <div style="background:#eafaf1;border-radius:8px;padding:14px;font-size:12.5px;color:#1a7c45;font-weight:600">
+              ✓ No issues found — this article is healthy.
+            </div>
+          </div>`}
+        <div class="detail-section">
+          <div class="detail-section-title">Article metadata</div>
+          <div class="detail-meta-grid">
+            <div class="meta-cell">
+              <div class="meta-cell-label">Last updated</div>
+              <div class="meta-cell-val">${a.daysSince}d ago</div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell-label">Category</div>
+              <div class="meta-cell-val">${a.category}</div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell-label">Assigned writer</div>
+              <div class="meta-cell-val">${a.writer}</div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell-label">Flags</div>
+              <div class="meta-cell-val">${a.flags.length === 0 ? 'None' : a.flags.length}</div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Assign &amp; action</div>
+          <div class="edit-label" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:6px">Reassign to</div>
+          <select class="assign-select">
+            ${WRITERS.map(w => `<option ${w===a.writer?'selected':''}>${w}</option>`).join('')}
+          </select>
+          <div class="detail-actions">
+            <button class="detail-btn secondary" onclick="showToast('Snoozed for 7 days')">Snooze 7d</button>
+            <button class="detail-btn primary" onclick="markReviewed(${a.id})">Mark reviewed</button>
+          </div>
+          <a class="studio-link">
+            <span class="sanity-dot" style="background:#e05c30"></span>
+            Open in Sanity Studio →
+          </a>
+        </div>
+      </div>`;
+  }
+
+  function closeDetail() {
+    selectedId = null;
+    document.getElementById('detailPanel').classList.remove('open');
+    renderList();
+  }
+
+  // ── MODAL ──
+  const MODAL_CONTENT = {
+    groq: `<pre class="code-block"><span class="comment">// Sanity GROQ query powering this dashboard
+// Runs every 5 minutes via scheduled Sanity Function</span>
+
+<span class="fn">*</span>[<span class="field">_type</span> == <span class="string">"article"</span> && (
+  <span class="comment">// Content not reviewed in 90 days</span>
+  <span class="fn">dateTime</span>(<span class="field">lastReviewedAt</span>) < <span class="fn">dateTime</span>(<span class="fn">now</span>()) - <span class="val">60*60*24*90</span>
+  ||
+  <span class="comment">// Affiliate links flagged as broken by link checker</span>
+  <span class="field">affiliateLinkStatus</span> == <span class="string">"broken"</span>
+  ||
+  <span class="comment">// Point valuation changed since last publish</span>
+  <span class="field">pointValuationVerified</span> == <span class="keyword">false</span>
+  ||
+  <span class="comment">// Offer has a known expiration that has passed</span>
+  <span class="field">offerExpiration</span> < <span class="fn">now</span>()
+  ||
+  <span class="comment">// SEO traffic decay signal from analytics pipeline</span>
+  <span class="field">seoTrafficDecay</span> > <span class="val">20</span>
+)] | <span class="fn">order</span>(<span class="field">stalenessScore</span> <span class="keyword">desc</span>) {
+  <span class="field">_id</span>,
+  <span class="field">title</span>,
+  <span class="field">_updatedAt</span>,
+  <span class="field">lastReviewedAt</span>,
+  <span class="field">stalenessScore</span>,
+  <span class="field">flags</span>,
+  <span class="field">offerExpiration</span>,
+  <span class="field">affiliateLinkStatus</span>,
+  <span class="field">pointValuationVerified</span>,
+  <span class="field">seoTrafficDecay</span>,
+  <span class="string">"author"</span>: <span class="field">author</span>->{ <span class="field">name</span> },
+  <span class="string">"category"</span>: <span class="field">category</span>-><span class="field">title</span>
+}</pre>
+<div class="schema-note">This query is evaluated against the live Sanity Content Lake. The <span>stalenessScore</span> field is computed by a scheduled Sanity Function that runs nightly, weighing recency, flag count, and traffic signals into a 0–100 composite score.</div>`,
+
+    schema: `<pre class="code-block"><span class="comment">// Sanity schema — article document type (abbreviated)
+// defineType from 'sanity'</span>
+
+<span class="fn">defineType</span>({
+  <span class="field">name</span>: <span class="string">'article'</span>,
+  <span class="field">title</span>: <span class="string">'Article'</span>,
+  <span class="field">type</span>: <span class="string">'document'</span>,
+  <span class="field">fields</span>: [
+    <span class="comment">// ── Core fields ──</span>
+    <span class="fn">defineField</span>({ <span class="field">name</span>: <span class="string">'title'</span>,    <span class="field">type</span>: <span class="string">'string'</span>,    <span class="field">validation</span>: r => r.<span class="fn">required</span>() }),
+    <span class="fn">defineField</span>({ <span class="field">name</span>: <span class="string">'category'</span>, <span class="field">type</span>: <span class="string">'reference'</span>, <span class="field">to</span>: [{ <span class="field">type</span>: <span class="string">'category'</span> }] }),
+    <span class="fn">defineField</span>({ <span class="field">name</span>: <span class="string">'author'</span>,   <span class="field">type</span>: <span class="string">'reference'</span>, <span class="field">to</span>: [{ <span class="field">type</span>: <span class="string">'author'</span> }] }),
+    <span class="fn">defineField</span>({ <span class="field">name</span>: <span class="string">'body'</span>,     <span class="field">type</span>: <span class="string">'array'</span>,     <span class="field">of</span>: [{ <span class="field">type</span>: <span class="string">'block'</span> }] }),
+
+    <span class="comment">// ── Freshness fields ── (power this dashboard)</span>
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'lastReviewedAt'</span>,
+      <span class="field">title</span>: <span class="string">'Last reviewed date'</span>,
+      <span class="field">type</span>: <span class="string">'datetime'</span>,
+      <span class="field">description</span>: <span class="string">'Set manually by writer on review. Triggers staleness reset.'</span>
+    }),
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'offerExpiration'</span>,
+      <span class="field">title</span>: <span class="string">'Welcome offer expiration date'</span>,
+      <span class="field">type</span>: <span class="string">'datetime'</span>,
+    }),
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'affiliateLinkStatus'</span>,
+      <span class="field">type</span>: <span class="string">'string'</span>,
+      <span class="field">options</span>: { <span class="field">list</span>: [<span class="string">'ok'</span>, <span class="string">'broken'</span>, <span class="string">'unchecked'</span>] },
+      <span class="field">readOnly</span>: <span class="keyword">true</span>, <span class="comment">// Set by automated link checker function</span>
+    }),
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'pointValuationVerified'</span>,
+      <span class="field">type</span>: <span class="string">'boolean'</span>,
+      <span class="field">initialValue</span>: <span class="keyword">true</span>,
+      <span class="comment">// Set to false by Function when monthly valuations dataset updates</span>
+    }),
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'stalenessScore'</span>,
+      <span class="field">title</span>: <span class="string">'Staleness score (0–100)'</span>,
+      <span class="field">type</span>: <span class="string">'number'</span>,
+      <span class="field">readOnly</span>: <span class="keyword">true</span>, <span class="comment">// Computed nightly by Sanity Function</span>
+    }),
+    <span class="fn">defineField</span>({
+      <span class="field">name</span>: <span class="string">'flags'</span>,
+      <span class="field">type</span>: <span class="string">'array'</span>,
+      <span class="field">of</span>: [{ <span class="field">type</span>: <span class="string">'string'</span> }],
+      <span class="field">readOnly</span>: <span class="keyword">true</span>, <span class="comment">// Populated by automated Function pipeline</span>
+    }),
+  ]
+})</pre>
+<div class="schema-note">Fields marked <span>readOnly: true</span> are written only by automated Sanity Functions — never by editors directly. This keeps the dashboard's data trustworthy and consistent.</div>`,
+
+    arch: `<pre class="code-block"><span class="comment">// Content Health Pipeline — Architecture Overview</span>
+
+<span class="comment">// 1. VALUATION CHANGE TRIGGER</span>
+<span class="comment">// When: TPG editors update the monthly valuations dataset in Sanity</span>
+<span class="comment">// Sanity webhook fires → Function compares new valuations to stored</span>
+<span class="comment">//   article-level point values → sets pointValuationVerified = false</span>
+<span class="comment">//   on all articles referencing affected programs</span>
+
+<span class="type">valuationsDataset</span>.<span class="fn">onUpdate</span>() → {
+  <span class="fn">queryArticlesReferencingProgram</span>(changedPrograms)
+  .<span class="fn">forEach</span>(article => <span class="fn">patch</span>({ <span class="field">pointValuationVerified</span>: <span class="keyword">false</span> }))
+}
+
+<span class="comment">// 2. NIGHTLY STALENESS SCORER (Sanity Function, cron)</span>
+<span class="comment">// Runs at 2am ET. Computes stalenessScore for every article.</span>
+
+<span class="type">stalenessScore</span> = <span class="fn">compute</span>({
+  <span class="field">daysSinceReview</span>:   <span class="val">weight 0.4</span>,  <span class="comment">// 90d threshold</span>
+  <span class="field">flagCount</span>:         <span class="val">weight 0.35</span>, <span class="comment">// each flag adds score</span>
+  <span class="field">seoDecaySignal</span>:    <span class="val">weight 0.15</span>, <span class="comment">// from analytics pipeline</span>
+  <span class="field">affiliateLinkAge</span>:  <span class="val">weight 0.10</span>, <span class="comment">// days since last link check</span>
+})
+
+<span class="comment">// 3. AFFILIATE LINK CHECKER (external cron → Sanity REST API)</span>
+<span class="comment">// Runs every 6 hours. Fetches all affiliate URLs from articles,</span>
+<span class="comment">// HTTP-checks each, patches affiliateLinkStatus accordingly.</span>
+
+<span class="comment">// 4. OFFER EXPIRATION WATCHER</span>
+<span class="comment">// GROQ query finds articles where offerExpiration < now().</span>
+<span class="comment">// Patches flags[] array to include 'expired'.</span>
+<span class="comment">// Dashboard auto-reflects — no human intervention needed.</span></pre>
+<div class="schema-note">The longest pole in implementing this is <span>standardizing the schema</span> across all existing articles — especially <span>offerExpiration</span> and <span>lastReviewedAt</span>, which are often missing or inconsistently populated in legacy content. Plan for a content audit sprint before pipeline work begins.</div>`
+  };
+
+  let activeModalTab = 'groq';
+
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('modalBody').innerHTML = MODAL_CONTENT.groq;
+    activeModalTab = 'groq';
+  }
+
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+  function handleModalClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function switchModalTab(btn, tab) {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    activeModalTab = tab;
+    document.getElementById('modalBody').innerHTML = MODAL_CONTENT[tab];
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ── INIT ──
+  renderStats();
+  renderList();
+</script>
+</body>
+</html>
