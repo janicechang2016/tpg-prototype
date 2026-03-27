@@ -68,7 +68,7 @@
     /* ── HERO ── */
     .hero {
       background: var(--tpg-navy);
-      padding: 72px 40px 80px;
+      padding: 28px 40px;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -77,34 +77,34 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-eyebrow {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--tpg-gold);
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
     .hero-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(36px, 5vw, 56px);
+      font-size: clamp(22px, 3vw, 32px);
       font-weight: 700;
       color: var(--white);
-      line-height: 1.15;
+      line-height: 1.2;
       max-width: 700px;
-      margin: 0 auto 20px;
-      letter-spacing: -0.5px;
+      margin: 0 auto 8px;
+      letter-spacing: -0.3px;
     }
     .hero-sub {
       font-family: 'Source Serif 4', serif;
-      font-size: 18px;
-      color: rgba(255,255,255,0.7);
-      max-width: 560px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      max-width: 540px;
+      margin: 0 auto;
+      line-height: 1.5;
     }
     .hero-meta {
       display: flex;
@@ -465,7 +465,7 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 800px) {
       .topbar { padding: 0 20px; }
-      .hero { padding: 48px 24px 56px; }
+      .hero { padding: 20px 24px; }
       .thesis-section { padding: 48px 24px 0; }
       .prototypes-section { padding: 48px 24px 0; }
       .sanity-inner { grid-template-columns: 1fr; gap: 32px; }
