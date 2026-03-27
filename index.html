@@ -233,6 +233,83 @@
       white-space: nowrap;
       padding-top: 1px;
     }
+    .pain-point-sub-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--tpg-gold);
+      margin-top: 14px;
+      margin-bottom: 5px;
+    }
+    .pain-point-solution {
+      font-size: 13.5px;
+      color: #3d3a35;
+      line-height: 1.6;
+    }
+    .pain-point-metrics {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pain-point-metrics li {
+      font-size: 12px;
+      color: var(--muted);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .pain-point-metrics li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--tpg-gold);
+    }
+    .pain-point-demo {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .pain-point-demo-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .pain-point-demo-link:hover {
+      background: var(--cream-dark);
+      border-color: var(--tpg-gold);
+    }
+    .pain-point-demo-icon { font-size: 20px; flex-shrink: 0; }
+    .pain-point-demo-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+    }
+    .pain-point-demo-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--tpg-gold);
+      margin-left: 8px;
+    }
+    .pain-point-demo-cta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--tpg-blue);
+      flex-shrink: 0;
+    }
 
     /* ── LEAD PROTOTYPES ── */
     .prototypes-section {
@@ -533,8 +610,8 @@
 
   <!-- HERO -->
   <section class="hero">
-    <h1 class="hero-title">Three problems. Three prototypes. One content graph.</h1>
-    <p class="hero-sub" style="margin-bottom:0">Three working prototypes showing what becomes possible when TPG's CMS migration is the foundation for smarter editorial tools — not just a platform swap.</p>
+    <h1 class="hero-title">Three editorial problems. Three working solutions. One content graph.</h1>
+    <p class="hero-sub" style="margin-bottom:0">What becomes possible when TPG's CMS migration is the foundation for smarter editorial tools — not just a platform swap.</p>
   </section>
 
   <!-- PAIN POINTS -->
@@ -542,124 +619,77 @@
     <div class="section-label">The Problems Worth Solving</div>
     <h2 class="thesis-title">Three things that aren't working</h2>
     <div class="thesis-body">
-      <p>These prototypes didn't start with a technology. They started with three friction points that show up in TPG's content, reader behavior, and editorial operations — and that Sanity's migration creates a real opportunity to fix.</p>
+      <p>These didn't start with a technology. They started with three friction points in TPG's content, reader behavior, and editorial operations — and a real opportunity the CMS migration creates to fix them.</p>
     </div>
 
     <div class="pain-points">
 
       <div class="pain-point">
         <div class="pain-point-headline">Content goes stale without anyone noticing</div>
-        <div class="pain-point-body">Editors manually audit hundreds of articles to catch expired offers, changed valuations, and broken affiliate links. By the time an issue surfaces, it's usually a reader complaint or a missed revenue event — not a proactive catch.</div>
-        <div class="pain-point-footer">
-          <div class="pain-point-metric"><strong>How we'd measure progress:</strong> % of stale articles surfaced before reader complaints; reduction in affiliate link rot rate; mean time-to-update after a valuation change.</div>
-          <div class="pain-point-proto">→ Content Dashboard</div>
+        <div class="pain-point-body">Editors manually check hundreds of articles for expired offers, broken links, and outdated valuations — by the time something surfaces, it's usually a reader complaint or a missed revenue event.</div>
+        <div class="pain-point-sub-label">Solution</div>
+        <div class="pain-point-solution">A dashboard that scores and ranks articles by staleness automatically, so editors spend time fixing problems rather than hunting for them.</div>
+        <div class="pain-point-sub-label">Success Metrics</div>
+        <ul class="pain-point-metrics">
+          <li>% of stale articles caught before reader complaints</li>
+          <li>Reduction in affiliate link rot rate</li>
+          <li>Mean time-to-update after a valuation change</li>
+        </ul>
+        <div class="pain-point-demo">
+          <a class="pain-point-demo-link" href="tpg_cms_dashboard.html">
+            <span class="pain-point-demo-icon">📋</span>
+            <span class="pain-point-demo-name">Content Health Dashboard <span class="pain-point-demo-badge">★ Start Here</span></span>
+            <span class="pain-point-demo-cta">Open demo →</span>
+          </a>
         </div>
       </div>
 
       <div class="pain-point">
         <div class="pain-point-headline">Readers don't trust TPG's recommendations</div>
-        <div class="pain-point-body">It's documented where enthusiast readers actually talk — in r/CreditCards threads, users say it directly: "take it with a grain of salt," "heavy bias toward affiliate partners," "TPG is for basics." Readers who want real analysis defect to Doctor of Credit or FrequentMiler. An affiliate business model and reader credibility aren't naturally opposed — but right now they feel that way.</div>
-        <div class="pain-point-footer">
-          <div class="pain-point-metric"><strong>How we'd measure progress:</strong> Session depth, return visit rate; proportion of users citing source quality in post-session surveys; reduction in forum complaints about affiliate bias tracked over a 6-month window.</div>
-          <div class="pain-point-proto">→ AI Chat Panel</div>
+        <div class="pain-point-body">In r/CreditCards threads, readers say it directly: "take it with a grain of salt," "heavy bias toward affiliate partners," "TPG is for basics" — and defect to Doctor of Credit for real analysis.</div>
+        <div class="pain-point-sub-label">Solution</div>
+        <div class="pain-point-solution">An AI assistant that cites its sources and shows its CMS data directly, so the affiliate relationship is transparent rather than hidden behind editorial polish.</div>
+        <div class="pain-point-sub-label">Success Metrics</div>
+        <ul class="pain-point-metrics">
+          <li>Session depth and return visit rate</li>
+          <li>% of users citing source quality in post-session surveys</li>
+          <li>Reduction in forum complaints about affiliate bias over 6 months</li>
+        </ul>
+        <div class="pain-point-demo">
+          <a class="pain-point-demo-link" href="tpg_prototype.html">
+            <span class="pain-point-demo-icon">💬</span>
+            <span class="pain-point-demo-name">AI Chat Panel</span>
+            <span class="pain-point-demo-cta">Open demo →</span>
+          </a>
         </div>
       </div>
 
       <div class="pain-point">
-        <div class="pain-point-headline">The chat panel is only as trustworthy as the data behind it</div>
-        <div class="pain-point-body">Keeping hundreds of articles enriched, structured, and current isn't something editors can do manually at scale. Engineers need tools to audit, enrich, and update content programmatically — so the AI assistant has something accurate to read from. Inaccurate content graph, inaccurate AI answers.</div>
-        <div class="pain-point-footer">
-          <div class="pain-point-metric"><strong>How we'd measure progress:</strong> AI response accuracy rate; reduction in sourcing errors flagged by readers; content enrichment coverage across the catalog.</div>
-          <div class="pain-point-proto">→ CMS CLI Tool</div>
+        <div class="pain-point-headline">The AI is only as trustworthy as the data behind it</div>
+        <div class="pain-point-body">Keeping hundreds of articles enriched and structured isn't something editors can do manually at scale — and inaccurate content means inaccurate AI answers.</div>
+        <div class="pain-point-sub-label">Solution</div>
+        <div class="pain-point-solution">A CLI engineers use to audit, enrich, and update article metadata programmatically — keeping the content graph accurate enough for the AI assistant to be reliable.</div>
+        <div class="pain-point-sub-label">Success Metrics</div>
+        <ul class="pain-point-metrics">
+          <li>AI response accuracy rate</li>
+          <li>Reduction in sourcing errors flagged by readers</li>
+          <li>Content enrichment coverage across the catalog</li>
+        </ul>
+        <div class="pain-point-demo">
+          <a class="pain-point-demo-link" href="tpg_cli.html">
+            <span class="pain-point-demo-icon">⌨️</span>
+            <span class="pain-point-demo-name">CMS CLI Tool</span>
+            <span class="pain-point-demo-cta">Open demo →</span>
+          </a>
         </div>
       </div>
 
     </div>
   </section>
 
-  <!-- LEAD PROTOTYPES -->
-  <section class="prototypes-section">
-    <div class="prototypes-header">
-      <div>
-        <div class="section-label">The Prototypes</div>
-        <h2 class="prototypes-title">Three working demos</h2>
-        <div class="prototypes-subtitle">Each one addresses a different problem — all drawing from the same CMS</div>
-      </div>
-      <div class="order-note">All prototypes run client-side — no backend required</div>
-    </div>
-
-    <div class="lead-grid">
-
-      <!-- FEATURED: CMS Dashboard -->
-      <a class="proto-card featured theme-dashboard" href="tpg_cms_dashboard.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">📋</div>
-          <div class="card-tag tag-internal">Internal · Editorial Ops</div>
-        </div>
-        <div class="card-body">
-          <div class="featured-badge">★ Start Here</div>
-          <div class="card-title">Content Health &amp; Freshness Dashboard</div>
-          <div class="card-desc">See which articles need attention today — and why. The dashboard surfaces stale content automatically so editors spend time fixing problems, not hunting for them. Click "How this works" to see the system underneath — the data pipeline, the scoring model, and the CMS schema that makes it run.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">Automated flagging</span>
-              <span class="chip">Priority queue</span>
-              <span class="chip">CMS-powered</span>
-            </div>
-            <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- ROW 2: Chat Panel + CLI -->
-      <div class="lead-row-2">
-
-        <!-- AI Chat Panel -->
-        <a class="proto-card theme-chat" href="tpg_prototype.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">💬</div>
-            <div class="card-tag tag-consumer">Internal Build · Reader Trust</div>
-          </div>
-          <div class="card-body">
-            <div class="card-title">Contextual AI Chat Panel</div>
-            <div class="card-desc">TPG's credibility problem is documented where readers actually talk — r/CreditCards users are specific about it. This prototype shows what a trust-first AI assistant looks like: one that cites its sources, shows its data, and earns reader confidence rather than hiding the affiliate relationship behind editorial polish. Click "View CMS data" to see how the AI reads the article.</div>
-            <div class="card-footer">
-              <div class="card-chips">
-                <span class="chip">Source citations</span>
-                <span class="chip">Transparent sourcing</span>
-                <span class="chip">Reader trust</span>
-              </div>
-              <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            </div>
-          </div>
-        </a>
-
-        <!-- CLI Tool -->
-        <a class="proto-card theme-cli" href="tpg_cli.html">
-          <div class="card-visual">
-            <div class="card-visual-icon">⌨️</div>
-            <div class="card-tag tag-engineering">Engineering · Content Infra</div>
-          </div>
-          <div class="card-body">
-            <div class="card-title">CMS CLI Tool</div>
-            <div class="card-desc">The engineering side of the chat panel story. Engineers use the CLI to enrich article metadata at scale, audit content freshness, and scaffold structured updates — keeping the content graph accurate enough for the AI assistant to be trustworthy. The CLI is what makes the reader-facing experience reliable.</div>
-            <div class="card-footer">
-              <div class="card-chips">
-                <span class="chip">Batch enrichment</span>
-                <span class="chip">Freshness audits</span>
-                <span class="chip">Feeds chat panel</span>
-              </div>
-              <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            </div>
-          </div>
-        </a>
-
-      </div><!-- /lead-row-2 -->
-    </div><!-- /lead-grid -->
-  </section>
 
   <!-- SANITY CALLOUT -->
-  <section class="sanity-section" style="margin-top: 64px;">
+  <section class="sanity-section" style="margin-top: 48px;">
     <div class="sanity-inner">
       <div>
         <div class="section-label">For Engineers Who Want to Go Deeper</div>
@@ -717,11 +747,11 @@
   <script>
     // ── GUIDED TOUR ──
     const TOUR_STEPS=[
-      {target:'.hero',title:'Three problems, three prototypes',body:'This portfolio is built around real friction points in TPG\'s editorial operation — not around a technology. Scroll down to see the problems before the demos.',pos:'bottom'},
-      {target:'.pain-points',title:'Start with the problems',body:'Each pain point names the current cost, the user impact, and the metric we\'d use to evaluate success. The prototypes are hypotheses, not solutions.',pos:'bottom'},
-      {target:'.proto-card.featured',title:'Hero demo: the dashboard',body:'The Content Health Dashboard is the internal tools role in prototype form. Click to open — a guided tour will launch automatically inside.',pos:'bottom'},
-      {target:'.lead-row-2',title:'Chat panel + CLI — one story',body:'The chat panel earns reader trust through transparency. The CLI is what keeps the data behind it accurate. They\'re the same product from two different angles.',pos:'top'},
-      {target:'.sanity-section',title:'For the engineering conversation',body:'This section is for the VP Engineering and EM — the technical detail behind how all three prototypes share a single data source without bespoke pipelines.',pos:'top'}
+      {target:'.hero',title:'Here\'s what this is',body:'Three real problems in TPG\'s editorial operation — each with a working solution built to address it. The CMS migration is what makes all three possible.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(1)',title:'Problem 1: Content goes stale',body:'Editors are manually hunting for problems. The dashboard automates staleness detection — surfacing issues before they become reader complaints or missed revenue.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(2)',title:'Problem 2: Reader trust is eroding',body:'r/CreditCards readers document the credibility gap directly. The chat panel addresses it by showing sources and making the affiliate relationship transparent.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(3)',title:'Problem 3: The AI needs accurate data',body:'The chat panel is only as trustworthy as the content behind it. The CLI keeps that content enriched and current — it\'s the engineering foundation for the reader-facing experience.',pos:'bottom'},
+      {target:'.sanity-section',title:'The technical foundation',body:'All three solutions share a single data source — the same CMS TPG is migrating to. One schema change propagates to every surface. This section goes deeper for the engineering conversation.',pos:'top'}
     ];
     let _tStep=0,_tActive=false;
     function startTour(){_tStep=0;_tActive=true;_tShow();}
