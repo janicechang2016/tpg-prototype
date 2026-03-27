@@ -921,6 +921,7 @@ function _tNext(){if(_tStep>=TOUR_STEPS.length-1){_tEnd();return;}_tStep++;_tSho
 function _tPrev(){if(_tStep>0){_tStep--;_tShow();}}
 function _tEnd(){_tActive=false;document.getElementById('tourHL').style.display='none';document.getElementById('tourTT').style.display='none';}
 document.addEventListener('keydown',e=>{if(!_tActive)return;if(e.key==='ArrowRight'||e.key==='Enter')_tNext();if(e.key==='ArrowLeft')_tPrev();if(e.key==='Escape')_tEnd();});
+window.addEventListener('load',()=>setTimeout(startTour,900));
 </script>
 </body>
 </html>
