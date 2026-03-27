@@ -684,22 +684,6 @@
   </section>
 
 
-  <!-- WHAT'S NEXT -->
-  <section class="sanity-section" style="margin-top: 48px;">
-    <div class="sanity-inner" style="grid-template-columns: 1fr; max-width: 700px;">
-      <div>
-        <div class="section-label">What's Next</div>
-        <h2 class="sanity-title">Making this AI-native</h2>
-        <p class="sanity-body">All three demos are built on a shared content graph — Sanity as the CMS, with GROQ (Sanity's query language for reading structured content) as the data layer. The natural next step is exposing that graph as a tool surface that AI agents can call directly.</p>
-        <p class="sanity-body" style="margin-top:12px">Right now, engineers run <code style="font-family:monospace;font-size:13px;background:var(--cream-dark);padding:1px 5px;border-radius:3px">tpg cms audit</code> in a terminal. The next version: Claude Code — or any AI agent — invokes those same commands as tools in response to a natural language prompt. Two ways to get there:</p>
-        <ul class="sanity-body" style="margin-top:12px;padding-left:18px;display:flex;flex-direction:column;gap:10px">
-          <li><strong>Wrap Sanity directly</strong> — expose GROQ queries and document mutations as agent-callable tools, so an AI can read and write content without a human running commands</li>
-          <li><strong>Wrap the dashboard logic</strong> — expose the scoring model, flag detection, and update workflows already built on top of Sanity, so the agent inherits the business logic rather than rebuilding it</li>
-        </ul>
-        <p class="sanity-body" style="margin-top:16px">Either way, the workflow becomes: editor prompts → agent plans → CLI executes → Sanity updates. Content operations that currently require engineering time become composable and AI-driven.</p>
-      </div>
-    </div>
-  </section>
 
   <!-- FOOTER -->
   <footer class="footer" style="padding-bottom: 64px;">
@@ -718,7 +702,7 @@
     <div class="tt-body" id="ttBody"></div>
     <div class="tt-footer">
       <div class="tt-dots">
-        <div class="tt-dot"></div><div class="tt-dot"></div><div class="tt-dot"></div><div class="tt-dot"></div><div class="tt-dot"></div>
+        <div class="tt-dot"></div><div class="tt-dot"></div><div class="tt-dot"></div><div class="tt-dot"></div>
       </div>
       <div class="tt-btns">
         <button class="tt-btn tt-skip" onclick="_tPrev()" id="ttPrev">← Back</button>
@@ -733,8 +717,7 @@
       {target:'.hero',title:'Here\'s what this is',body:'Three editorial problems TPG is facing today — each with a working solution. Click through to see each one.',pos:'bottom'},
       {target:'.pain-points .pain-point:nth-child(1)',title:'Content goes stale',body:'<span class="tt-prob-label">Problem</span>Editors manually hunt for stale articles — and usually find out too late, from a reader complaint.<span class="tt-soln-label">Solution</span>The dashboard scores and surfaces stale content automatically so editors spend time fixing, not searching.',pos:'bottom'},
       {target:'.pain-points .pain-point:nth-child(2)',title:'Reader trust is eroding',body:'<span class="tt-prob-label">Problem</span>r/CreditCards readers say it directly: TPG recommendations feel affiliate-driven, not editorially independent.<span class="tt-soln-label">Solution</span>The chat panel shows its sources and CMS data openly — transparency as a feature, not an afterthought.',pos:'bottom'},
-      {target:'.pain-points .pain-point:nth-child(3)',title:'The AI needs accurate data',body:'<span class="tt-prob-label">Problem</span>The chat panel is only as trustworthy as the content graph behind it — and editors can\'t maintain that at scale manually.<span class="tt-soln-label">Solution</span>The CLI lets engineers audit, enrich, and update article metadata programmatically, keeping the data the AI reads accurate.',pos:'bottom'},
-      {target:'.sanity-section',title:'Where this goes next',body:'The CLI commands engineers run today become the interface AI agents call tomorrow — making content operations composable and AI-driven.',pos:'top'}
+      {target:'.pain-points .pain-point:nth-child(3)',title:'The AI needs accurate data',body:'<span class="tt-prob-label">Problem</span>The chat panel is only as trustworthy as the content graph behind it — and editors can\'t maintain that at scale manually.<span class="tt-soln-label">Solution</span>The CLI lets engineers audit, enrich, and update article metadata programmatically, keeping the data the AI reads accurate.',pos:'bottom'}
     ];
     let _tStep=0,_tActive=false;
     function startTour(){_tStep=0;_tActive=true;_tShow();}
