@@ -14,7 +14,6 @@
       --tpg-navy: #1a2744;
       --tpg-blue: #1d4ed8;
       --tpg-gold: #c9a84c;
-      --tpg-red: #dc2626;
       --cream: #f5f5f0;
       --cream-dark: #ece9e1;
       --ink: #1c1917;
@@ -45,13 +44,7 @@
       z-index: 100;
       border-bottom: 2px solid var(--tpg-gold);
     }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
     .topbar-wordmark {
       font-family: 'Playfair Display', serif;
       font-size: 20px;
@@ -59,11 +52,7 @@
       color: var(--white);
       letter-spacing: -0.3px;
     }
-
-    .topbar-wordmark span {
-      color: var(--tpg-gold);
-    }
-
+    .topbar-wordmark span { color: var(--tpg-gold); }
     .proto-badge {
       background: var(--tpg-gold);
       color: var(--tpg-navy);
@@ -74,11 +63,7 @@
       padding: 2px 8px;
       border-radius: 3px;
     }
-
-    .topbar-right {
-      font-size: 13px;
-      color: rgba(255,255,255,0.55);
-    }
+    .topbar-right { font-size: 13px; color: rgba(255,255,255,0.55); }
 
     /* ── HERO ── */
     .hero {
@@ -88,7 +73,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .hero::before {
       content: '';
       position: absolute;
@@ -96,7 +80,6 @@
       background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
-
     .hero-eyebrow {
       font-size: 11px;
       font-weight: 600;
@@ -105,7 +88,6 @@
       color: var(--tpg-gold);
       margin-bottom: 16px;
     }
-
     .hero-title {
       font-family: 'Playfair Display', serif;
       font-size: clamp(36px, 5vw, 56px);
@@ -116,7 +98,6 @@
       margin: 0 auto 20px;
       letter-spacing: -0.5px;
     }
-
     .hero-sub {
       font-family: 'Source Serif 4', serif;
       font-size: 18px;
@@ -125,7 +106,6 @@
       margin: 0 auto 40px;
       line-height: 1.6;
     }
-
     .hero-meta {
       display: flex;
       align-items: center;
@@ -133,7 +113,6 @@
       gap: 24px;
       flex-wrap: wrap;
     }
-
     .hero-pill {
       display: flex;
       align-items: center;
@@ -145,7 +124,6 @@
       padding: 6px 14px;
       border-radius: 20px;
     }
-
     .hero-pill-dot {
       width: 6px;
       height: 6px;
@@ -159,7 +137,6 @@
       margin: 0 auto;
       padding: 64px 40px 0;
     }
-
     .section-label {
       font-size: 11px;
       font-weight: 600;
@@ -168,7 +145,6 @@
       color: var(--tpg-gold);
       margin-bottom: 12px;
     }
-
     .thesis-title {
       font-family: 'Playfair Display', serif;
       font-size: 28px;
@@ -177,18 +153,13 @@
       margin-bottom: 16px;
       letter-spacing: -0.3px;
     }
-
     .thesis-body {
       font-family: 'Source Serif 4', serif;
       font-size: 16px;
       line-height: 1.75;
       color: #3d3a35;
     }
-
-    .thesis-body p + p {
-      margin-top: 12px;
-    }
-
+    .thesis-body p + p { margin-top: 12px; }
     .thesis-connective {
       margin-top: 32px;
       background: var(--white);
@@ -197,7 +168,6 @@
       border-radius: 6px;
       padding: 20px 24px;
     }
-
     .thesis-connective-label {
       font-size: 11px;
       font-weight: 600;
@@ -206,13 +176,7 @@
       color: var(--tpg-gold);
       margin-bottom: 10px;
     }
-
-    .connective-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .connective-list { display: flex; flex-direction: column; gap: 8px; }
     .connective-item {
       display: flex;
       align-items: flex-start;
@@ -221,20 +185,14 @@
       color: #3d3a35;
       line-height: 1.5;
     }
+    .connective-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
 
-    .connective-icon {
-      font-size: 15px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    /* ── PROTOTYPE GRID ── */
+    /* ── LEAD PROTOTYPES ── */
     .prototypes-section {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 64px 40px 80px;
+      padding: 64px 40px 0;
     }
-
     .prototypes-header {
       display: flex;
       align-items: flex-end;
@@ -243,9 +201,6 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-
-    .prototypes-header-left {}
-
     .prototypes-title {
       font-family: 'Playfair Display', serif;
       font-size: 28px;
@@ -253,13 +208,7 @@
       color: var(--ink);
       letter-spacing: -0.3px;
     }
-
-    .prototypes-subtitle {
-      font-size: 14px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
+    .prototypes-subtitle { font-size: 14px; color: var(--muted); margin-top: 4px; }
     .order-note {
       font-size: 12px;
       color: var(--muted);
@@ -269,13 +218,19 @@
       border-radius: 4px;
     }
 
-    /* ── CARD GRID ── */
-    .proto-grid {
+    /* ── LEAD GRID: featured top + 2-col below ── */
+    .lead-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .lead-row-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
 
+    /* ── CARD BASE ── */
     .proto-card {
       background: var(--white);
       border: 1px solid var(--border);
@@ -286,18 +241,20 @@
       display: flex;
       flex-direction: column;
       transition: box-shadow 0.18s, transform 0.18s;
-      position: relative;
     }
-
     .proto-card:hover {
       box-shadow: 0 8px 32px rgba(0,0,0,0.10);
       transform: translateY(-2px);
     }
 
-    .proto-card.featured {
-      grid-column: 1 / -1;
-      flex-direction: row;
+    /* featured (horizontal) */
+    .proto-card.featured { flex-direction: row; }
+    .proto-card.featured .card-visual {
+      min-width: 300px;
+      flex: 0 0 300px;
     }
+    .proto-card.featured .card-body { padding: 28px 32px; }
+    .proto-card.featured .card-title { font-size: 24px; }
 
     .card-visual {
       background: var(--tpg-navy);
@@ -308,39 +265,10 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
-    .proto-card.featured .card-visual {
-      min-width: 320px;
-      flex: 0 0 320px;
-    }
-
-    .card-visual-icon {
-      font-size: 36px;
-      line-height: 1;
-      margin-bottom: 12px;
-    }
-
-    .card-rank {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.6);
-    }
-
+    .card-visual-icon { font-size: 36px; line-height: 1; margin-bottom: 12px; }
     .card-tag {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.6px;
@@ -349,7 +277,6 @@
       border-radius: 4px;
       width: fit-content;
     }
-
     .tag-consumer { background: rgba(29,78,216,0.25); color: #93c5fd; }
     .tag-internal { background: rgba(201,168,76,0.2); color: var(--tpg-gold); }
     .tag-editorial { background: rgba(220,38,38,0.2); color: #fca5a5; }
@@ -360,16 +287,6 @@
       display: flex;
       flex-direction: column;
     }
-
-    .card-number-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
     .card-title {
       font-family: 'Playfair Display', serif;
       font-size: 20px;
@@ -379,14 +296,12 @@
       margin-bottom: 8px;
       letter-spacing: -0.2px;
     }
-
     .card-desc {
       font-size: 13.5px;
       color: var(--muted);
       line-height: 1.55;
       flex: 1;
     }
-
     .card-footer {
       margin-top: 16px;
       padding-top: 14px;
@@ -395,13 +310,7 @@
       align-items: center;
       justify-content: space-between;
     }
-
-    .card-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-
+    .card-chips { display: flex; flex-wrap: wrap; gap: 5px; }
     .chip {
       font-size: 11px;
       color: #5a5650;
@@ -410,7 +319,6 @@
       padding: 2px 8px;
       border-radius: 3px;
     }
-
     .card-cta {
       font-size: 12px;
       font-weight: 600;
@@ -420,23 +328,8 @@
       gap: 4px;
       white-space: nowrap;
     }
-
-    .card-cta svg {
-      transition: transform 0.15s;
-    }
-
-    .proto-card:hover .card-cta svg {
-      transform: translateX(3px);
-    }
-
-    /* featured card specifics */
-    .proto-card.featured .card-body {
-      padding: 28px 32px;
-    }
-
-    .proto-card.featured .card-title {
-      font-size: 24px;
-    }
+    .card-cta svg { transition: transform 0.15s; }
+    .proto-card:hover .card-cta svg { transform: translateX(3px); }
 
     .featured-badge {
       display: inline-flex;
@@ -455,13 +348,100 @@
       width: fit-content;
     }
 
-    /* color themes per card */
+    /* color themes */
+    .theme-dashboard .card-visual { background: linear-gradient(135deg, #1a2744 0%, #7c2d12 100%); }
+    .theme-chat .card-visual { background: linear-gradient(135deg, #1a2744 0%, #0c4a6e 100%); }
+    .theme-cli .card-visual { background: linear-gradient(135deg, #111827 0%, #1a2744 100%); }
     .theme-award .card-visual { background: linear-gradient(135deg, #1a2744 0%, #0f3460 100%); }
     .theme-card .card-visual { background: linear-gradient(135deg, #1c2940 0%, #2d1b69 100%); }
     .theme-portfolio .card-visual { background: linear-gradient(135deg, #1a2744 0%, #14532d 100%); }
-    .theme-dashboard .card-visual { background: linear-gradient(135deg, #1a2744 0%, #7c2d12 100%); }
-    .theme-cli .card-visual { background: linear-gradient(135deg, #111827 0%, #1a2744 100%); }
-    .theme-chat .card-visual { background: linear-gradient(135deg, #1a2744 0%, #0c4a6e 100%); }
+
+    /* ── ADDITIONAL EXPLORATIONS ── */
+    .extras-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    .extras-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 20px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .extras-toggle:hover { background: var(--cream-dark); }
+
+    .extras-toggle-left { display: flex; align-items: center; gap: 14px; }
+
+    .extras-toggle-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .extras-toggle-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .extras-pill {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--cream-dark);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+
+    .extras-chevron {
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+      transition: transform 0.25s;
+      flex-shrink: 0;
+    }
+    .extras-chevron.open { transform: rotate(180deg); }
+
+    .extras-body {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+      opacity: 0;
+    }
+    .extras-body.open {
+      max-height: 1000px;
+      opacity: 1;
+    }
+
+    .extras-note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 20px 24px 4px;
+    }
+
+    .extras-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 16px 0 0;
+    }
+
+    /* extras cards are more compact */
+    .proto-card.compact .card-visual { min-height: 110px; padding: 20px 20px 18px; }
+    .proto-card.compact .card-visual-icon { font-size: 28px; }
+    .proto-card.compact .card-body { padding: 16px 20px 20px; }
+    .proto-card.compact .card-title { font-size: 16px; }
+    .proto-card.compact .card-desc { font-size: 13px; }
 
     /* ── SANITY CALLOUT ── */
     .sanity-section {
@@ -470,7 +450,6 @@
       border-bottom: 1px solid var(--border);
       padding: 56px 40px;
     }
-
     .sanity-inner {
       max-width: 860px;
       margin: 0 auto;
@@ -479,9 +458,6 @@
       gap: 48px;
       align-items: start;
     }
-
-    .sanity-text {}
-
     .sanity-title {
       font-family: 'Playfair Display', serif;
       font-size: 24px;
@@ -490,39 +466,21 @@
       margin-bottom: 12px;
       letter-spacing: -0.2px;
     }
-
-    .sanity-body {
-      font-size: 14px;
-      line-height: 1.65;
-      color: #3d3a35;
-    }
-
-    .sanity-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    .sanity-body { font-size: 14px; line-height: 1.65; color: #3d3a35; }
+    .sanity-stack { display: flex; flex-direction: column; gap: 12px; }
     .stack-row {
       background: var(--cream);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 12px 16px;
     }
-
     .stack-row-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 4px;
     }
-
-    .stack-row-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
+    .stack-row-name { font-size: 13px; font-weight: 600; color: var(--ink); }
     .stack-row-tag {
       font-size: 11px;
       font-weight: 600;
@@ -530,12 +488,7 @@
       text-transform: uppercase;
       color: var(--tpg-gold);
     }
-
-    .stack-row-desc {
-      font-size: 12.5px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
+    .stack-row-desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
 
     /* ── FOOTER ── */
     .footer {
@@ -544,39 +497,21 @@
       max-width: 700px;
       margin: 0 auto;
     }
-
-    .footer-note {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .footer-note a {
-      color: var(--tpg-blue);
-      text-decoration: none;
-    }
-
-    .footer-divider {
-      width: 40px;
-      height: 2px;
-      background: var(--border);
-      margin: 24px auto;
-    }
-
-    .footer-wordmark {
-      font-family: 'Playfair Display', serif;
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .footer-note { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .footer-divider { width: 40px; height: 2px; background: var(--border); margin: 24px auto; }
+    .footer-wordmark { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--muted); }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 720px) {
+    @media (max-width: 800px) {
       .topbar { padding: 0 20px; }
       .hero { padding: 48px 24px 56px; }
       .thesis-section { padding: 48px 24px 0; }
-      .prototypes-section { padding: 48px 24px 60px; }
+      .prototypes-section { padding: 48px 24px 0; }
+      .extras-section { padding: 32px 24px 60px; }
       .sanity-inner { grid-template-columns: 1fr; gap: 32px; }
       .sanity-section { padding: 48px 24px; }
+      .lead-row-2 { grid-template-columns: 1fr; }
+      .extras-grid { grid-template-columns: 1fr; }
       .proto-card.featured { flex-direction: column; }
       .proto-card.featured .card-visual { flex: none; min-width: 0; }
       .proto-card.featured .card-body { padding: 20px 24px 24px; }
@@ -599,11 +534,11 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-eyebrow">Product Vision · Internal Tools PM</div>
-    <h1 class="hero-title">AI-Powered Experiences for TPG's Next Chapter</h1>
-    <p class="hero-sub">Six interactive prototypes exploring how AI, structured content, and reader-first design can deepen loyalty, surface more value, and scale editorial quality.</p>
+    <h1 class="hero-title">AI-Powered Tooling for TPG's Editorial &amp; Content Ops</h1>
+    <p class="hero-sub">Three interactive prototypes showing how Sanity's content graph and Claude can power smarter internal tools — from freshness monitoring to AI-assisted editorial workflows.</p>
     <div class="hero-meta">
-      <div class="hero-pill"><div class="hero-pill-dot"></div>6 Working Prototypes</div>
-      <div class="hero-pill"><div class="hero-pill-dot"></div>Consumer + Internal Tools</div>
+      <div class="hero-pill"><div class="hero-pill-dot"></div>3 Core Prototypes</div>
+      <div class="hero-pill"><div class="hero-pill-dot"></div>Internal Tools Focus</div>
       <div class="hero-pill"><div class="hero-pill-dot"></div>Powered by Sanity.io</div>
       <div class="hero-pill"><div class="hero-pill-dot"></div>Claude AI Integration</div>
     </div>
@@ -612,197 +547,221 @@
   <!-- THESIS -->
   <section class="thesis-section">
     <div class="section-label">The Opportunity</div>
-    <h2 class="thesis-title">One content graph. Many AI surfaces.</h2>
+    <h2 class="thesis-title">One content graph. A smarter editorial operation.</h2>
     <div class="thesis-body">
-      <p>TPG sits on a uniquely structured data asset — card reviews, award valuations, transfer partner graphs, affiliate metadata — that no general-purpose AI can replicate. The opportunity is to expose that graph as an intelligent product layer rather than letting it sit as flat editorial copy.</p>
-      <p>These prototypes share a single thesis: <strong>Sanity's Content Lake as the source of truth</strong>, with Claude providing the reasoning layer on top. Each prototype represents a different surface — reader-facing, internal tooling, and editorial workflow — but all draw from the same structured schema.</p>
+      <p>TPG sits on a uniquely structured data asset — card reviews, award valuations, affiliate metadata, freshness signals — that no general-purpose AI can replicate. The opportunity is to expose that graph as an intelligent internal tooling layer rather than letting editors manage content staleness manually.</p>
+      <p>These prototypes share a single thesis: <strong>Sanity's Content Lake as the source of truth</strong>, with Claude providing the reasoning layer on top. Each prototype targets a different moment in the editorial workflow, but all draw from the same structured schema and GROQ pipeline.</p>
     </div>
     <div class="thesis-connective">
       <div class="thesis-connective-label">Sanity as connective tissue</div>
       <div class="connective-list">
-        <div class="connective-item"><span class="connective-icon">🗃️</span><span><strong>Card catalog</strong> powers the recommender engine, affiliate CTAs, and the chat panel's context assembly</span></div>
-        <div class="connective-item"><span class="connective-icon">📊</span><span><strong>TPG valuations dataset</strong> drives the ¢/pt calculations in the portfolio tracker and award search overlay</span></div>
-        <div class="connective-item"><span class="connective-icon">🕐</span><span><strong>Content freshness fields</strong> feed both the dashboard priority queue and the CLI audit commands</span></div>
-        <div class="connective-item"><span class="connective-icon">🤖</span><span><strong>Sanity Agent Context</strong> provides read-only, schema-aware API access — the right RAG surface for Claude</span></div>
+        <div class="connective-item"><span class="connective-icon">🕐</span><span><strong>Content freshness fields</strong> in the Sanity schema feed both the dashboard priority queue and the CLI audit commands — same GROQ query, two surfaces</span></div>
+        <div class="connective-item"><span class="connective-icon">🤖</span><span><strong>Agent Context (MCP)</strong> provides read-only, schema-aware API access — the right RAG surface for the in-article Claude assistant</span></div>
+        <div class="connective-item"><span class="connective-icon">⚡</span><span><strong>Sanity Functions</strong> automate valuation change detection and affiliate link checking — surfacing the right articles in the dashboard without editor intervention</span></div>
+        <div class="connective-item"><span class="connective-icon">🔧</span><span><strong>sanity exec</strong> enables the CLI prototype — custom Node.js scripts running against Content Lake with full Sanity client access</span></div>
       </div>
     </div>
   </section>
 
-  <!-- PROTOTYPES -->
+  <!-- LEAD PROTOTYPES -->
   <section class="prototypes-section">
     <div class="prototypes-header">
-      <div class="prototypes-header-left">
-        <div class="section-label">The Prototypes</div>
-        <h2 class="prototypes-title">Six working demos</h2>
-        <div class="prototypes-subtitle">Ordered most → least technically ambitious</div>
+      <div>
+        <div class="section-label">Core Prototypes</div>
+        <h2 class="prototypes-title">Three focused demos</h2>
+        <div class="prototypes-subtitle">Internal tools built directly on Sanity's content graph</div>
       </div>
       <div class="order-note">All prototypes run client-side — no backend required</div>
     </div>
 
-    <div class="proto-grid">
+    <div class="lead-grid">
 
-      <!-- 1: Award Search — FEATURED -->
-      <a class="proto-card featured theme-award" href="tpg_award_search.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">✈️</div>
-          <div class="card-tag tag-consumer">Consumer · Reader Tool</div>
-          <div class="card-rank">1</div>
-        </div>
-        <div class="card-body">
-          <div class="featured-badge">★ Most Ambitious</div>
-          <div class="card-title">Award Search &amp; Availability Explorer</div>
-          <div class="card-desc">Browse 14 realistic award flight results across 6 loyalty programs. Live ¢/point calculations against TPG benchmark valuations — color-coded by value tier (Great / Good / Fair / Poor). Filter by program, cabin, transfer partner (Chase UR, Amex MR, Citi TY), and max points. The "Sanity connection" note shows how real availability data and valuation updates would flow from the content graph.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">TPG valuations</span>
-              <span class="chip">Transfer partners</span>
-              <span class="chip">¢/pt overlay</span>
-              <span class="chip">6 programs</span>
-            </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- 2: Card Recommender -->
-      <a class="proto-card theme-card" href="tpg_card_recommender.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">💳</div>
-          <div class="card-tag tag-consumer">Consumer · Conversion Tool</div>
-          <div class="card-rank">2</div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">Card Stack Recommender</div>
-          <div class="card-desc">3-step wizard: enter monthly spending by category → choose goals → get a personalized 2–3 card recommendation with earnings bar charts, net annual value, and per-card Apply CTAs. Recommendation engine scores 8 cards across 7 spend categories.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">8 cards</span>
-              <span class="chip">Net value calc</span>
-              <span class="chip">Earnings chart</span>
-              <span class="chip">Apply CTAs</span>
-            </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- 3: AI Chat Panel -->
-      <a class="proto-card theme-chat" href="tpg_prototype.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">💬</div>
-          <div class="card-tag tag-consumer">Consumer · AI Assistant</div>
-          <div class="card-rank">3</div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">Contextual AI Chat Panel</div>
-          <div class="card-desc">In-article AI assistant with mock Claude backend, streaming text simulation, contextual follow-up questions, and source pills. "View CMS data" opens a 3-tab Sanity modal (Fields / Chat Context / GROQ) showing exactly how the AI context assembly works in production.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">Mock RAG</span>
-              <span class="chip">Streaming UX</span>
-              <span class="chip">Sanity modal</span>
-              <span class="chip">GROQ</span>
-            </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- 4: Portfolio Tracker -->
-      <a class="proto-card theme-portfolio" href="tpg_portfolio.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">📱</div>
-          <div class="card-tag tag-consumer">Consumer · App Experience</div>
-          <div class="card-rank">4</div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">Points Portfolio &amp; Redemption Value Tracker</div>
-          <div class="card-desc">App-first design (phone frame on desktop). Pre-loaded with $3,744 across Chase UR, Amex MR, United, Hyatt, Delta, Marriott. Live ¢/pt redemption meter, portfolio insights, CPP ranking table. Tap any balance to edit inline.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">Phone frame</span>
-              <span class="chip">¢/pt meter</span>
-              <span class="chip">6 programs</span>
-              <span class="chip">Inline edit</span>
-            </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- 5: CMS Dashboard -->
-      <a class="proto-card theme-dashboard" href="tpg_cms_dashboard.html">
+      <!-- FEATURED: CMS Dashboard -->
+      <a class="proto-card featured theme-dashboard" href="tpg_cms_dashboard.html">
         <div class="card-visual">
           <div class="card-visual-icon">📋</div>
           <div class="card-tag tag-internal">Internal · Editorial Ops</div>
-          <div class="card-rank">5</div>
         </div>
         <div class="card-body">
+          <div class="featured-badge">★ Hero Demo</div>
           <div class="card-title">Content Health &amp; Freshness Dashboard</div>
-          <div class="card-desc">Priority queue for editors: 15 articles with composite staleness scores, flag types (OFFER_EXPIRED, VALUATION_CHANGED, STALE, BROKEN_AFFILIATE), and a slide-in detail panel with contextual issue copy. "How this works" shows the GROQ query, Sanity schema, and pipeline architecture.</div>
+          <div class="card-desc">Priority queue for editors powered entirely by Sanity's content graph. 15 articles with composite staleness scores (recency, flag count, SEO decay, affiliate age), flag types (OFFER_EXPIRED, VALUATION_CHANGED, STALE, BROKEN_AFFILIATE), and a slide-in detail panel with contextual issue copy. "How this works" reveals the live GROQ query, Sanity schema TypeScript definition, and the 4-pipeline automation architecture behind it.</div>
           <div class="card-footer">
             <div class="card-chips">
               <span class="chip">Priority scoring</span>
               <span class="chip">GROQ query</span>
               <span class="chip">Sanity schema</span>
+              <span class="chip">Sanity Functions</span>
               <span class="chip">Bulk assign</span>
             </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
         </div>
       </a>
 
-      <!-- 6: CLI Tool -->
-      <a class="proto-card theme-cli" href="tpg_cli.html">
-        <div class="card-visual">
-          <div class="card-visual-icon">⌨️</div>
-          <div class="card-tag tag-editorial">Editorial · Developer Tool</div>
-          <div class="card-rank">6</div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">CMS CLI Tool</div>
-          <div class="card-desc">Simulated terminal (browser-based). Four commands: audit, enrich, draft, freshness-check. Shows how <code>sanity exec</code> enables a custom Node.js CLI connecting Claude to the Content Lake — with the architecture diagram tying it to the dashboard's GROQ pipeline.</div>
-          <div class="card-footer">
-            <div class="card-chips">
-              <span class="chip">sanity exec</span>
-              <span class="chip">4 commands</span>
-              <span class="chip">Architecture</span>
-              <span class="chip">Safety model</span>
+      <!-- ROW 2: Chat Panel + CLI -->
+      <div class="lead-row-2">
+
+        <!-- AI Chat Panel -->
+        <a class="proto-card theme-chat" href="tpg_prototype.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">💬</div>
+            <div class="card-tag tag-consumer">Consumer · AI Assistant</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Contextual AI Chat Panel</div>
+            <div class="card-desc">In-article Claude assistant with mock RAG backend and streaming text simulation. The key demo moment: "View CMS data" opens a 3-tab Sanity modal — Fields, assembled Chat Context, and the live GROQ query — showing exactly how the AI reads structured content to answer reader questions accurately.</div>
+            <div class="card-footer">
+              <div class="card-chips">
+                <span class="chip">Agent Context</span>
+                <span class="chip">Mock RAG</span>
+                <span class="chip">GROQ modal</span>
+                <span class="chip">Streaming UX</span>
+              </div>
+              <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             </div>
-            <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
-        </div>
-      </a>
+        </a>
 
-    </div>
+        <!-- CLI Tool -->
+        <a class="proto-card theme-cli" href="tpg_cli.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">⌨️</div>
+            <div class="card-tag tag-editorial">Editorial · Developer Tool</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">CMS CLI Tool</div>
+            <div class="card-desc">Simulated terminal showing how <code>sanity exec</code> enables a custom Node.js CLI connecting Claude to the Content Lake. Four commands: audit (runs the same GROQ query as the dashboard), enrich, draft, and freshness-check. The architecture diagram shows the full pipeline from editorial team to Content Lake.</div>
+            <div class="card-footer">
+              <div class="card-chips">
+                <span class="chip">sanity exec</span>
+                <span class="chip">4 commands</span>
+                <span class="chip">Shared GROQ</span>
+                <span class="chip">Architecture</span>
+              </div>
+              <div class="card-cta">Open demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+        </a>
+
+      </div><!-- /lead-row-2 -->
+    </div><!-- /lead-grid -->
   </section>
 
   <!-- SANITY CALLOUT -->
-  <section class="sanity-section">
+  <section class="sanity-section" style="margin-top: 64px;">
     <div class="sanity-inner">
-      <div class="sanity-text">
+      <div>
         <div class="section-label">Technical Foundation</div>
-        <h2 class="sanity-title">Why Sanity powers all six prototypes</h2>
-        <p class="sanity-body">TPG's migration to Sanity isn't just a CMS swap — it's the infrastructure bet that makes all of this possible. Sanity's structured schema, GROQ query language, and first-class AI integrations (Agent Context, Sanity Functions, MCP server) provide exactly the platform surface needed to build these experiences without a bespoke data pipeline for each one.</p>
-        <p class="sanity-body" style="margin-top:12px">The prototypes are deliberately thin on their own — the real product leverage comes from the shared content graph underneath.</p>
+        <h2 class="sanity-title">Why these prototypes are only possible with Sanity</h2>
+        <p class="sanity-body">TPG's migration to Sanity isn't just a CMS swap — it's the infrastructure bet that makes intelligent internal tooling possible. Sanity's structured schema, GROQ query language, and first-class AI integrations provide exactly the platform surface needed without building a bespoke data pipeline for each tool.</p>
+        <p class="sanity-body" style="margin-top:12px">The dashboard, CLI, and chat panel are all thin on their own. The product leverage comes from the shared content graph underneath — one schema update propagates everywhere.</p>
       </div>
       <div class="sanity-stack">
         <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">Agent Context (MCP)</span><span class="stack-row-tag">AI Integration</span></div>
-          <div class="stack-row-desc">Read-only, schema-aware API surface for Claude RAG — used in the chat panel and CLI enrichment commands</div>
+          <div class="stack-row-top"><span class="stack-row-name">Agent Context (MCP)</span><span class="stack-row-tag">GA · AI Integration</span></div>
+          <div class="stack-row-desc">Read-only, schema-aware API surface for Claude — powers the chat panel's context assembly without exposing drafts or write access</div>
         </div>
         <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">GROQ Query Language</span><span class="stack-row-tag">Data Layer</span></div>
-          <div class="stack-row-desc">Graph-relational queries over Content Lake — the dashboard and CLI share the same freshness audit query</div>
+          <div class="stack-row-top"><span class="stack-row-name">GROQ + pt::text()</span><span class="stack-row-tag">GA · Data Layer</span></div>
+          <div class="stack-row-desc">Graph-relational queries with Portable Text extraction — the dashboard and CLI share the same freshness audit query</div>
         </div>
         <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">Sanity Functions</span><span class="stack-row-tag">Automation</span></div>
-          <div class="stack-row-desc">Event-triggered TypeScript serverless: valuation change detection, affiliate link checking, freshness scoring</div>
+          <div class="stack-row-top"><span class="stack-row-name">Sanity Functions</span><span class="stack-row-tag">Experimental · Automation</span></div>
+          <div class="stack-row-desc">Event-triggered TypeScript serverless: valuation change detection, affiliate link checking, freshness scoring on publish</div>
         </div>
         <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">sanity exec CLI</span><span class="stack-row-tag">Developer Tool</span></div>
-          <div class="stack-row-desc">Extensibility hook for custom Node.js scripts — enables the tpg cms audit/enrich/draft commands</div>
+          <div class="stack-row-top"><span class="stack-row-name">sanity exec</span><span class="stack-row-tag">GA · Developer Tool</span></div>
+          <div class="stack-row-desc">CLI extensibility for custom Node.js scripts — enables the tpg cms audit / enrich / draft commands with full Content Lake access</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADDITIONAL EXPLORATIONS -->
+  <section class="extras-section">
+    <div
+      class="extras-toggle"
+      onclick="toggleExtras()"
+      role="button"
+      aria-expanded="false"
+      id="extras-toggle"
+    >
+      <div class="extras-toggle-left">
+        <div>
+          <div class="extras-toggle-title">Additional Consumer-Facing Explorations</div>
+          <div class="extras-toggle-sub">Three reader-facing prototypes showing the broader product surface</div>
+        </div>
+        <div class="extras-pill">3 prototypes</div>
+      </div>
+      <svg class="extras-chevron" id="extras-chevron" viewBox="0 0 20 20" fill="none">
+        <path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="extras-body" id="extras-body">
+      <div class="extras-note">
+        These prototypes explore what reader-facing AI experiences could look like if the same Sanity content graph were exposed to consumers. They're included for range — the primary focus of this portfolio is internal tooling.
+      </div>
+      <div class="extras-grid">
+
+        <!-- Award Search -->
+        <a class="proto-card compact theme-award" href="tpg_award_search.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">✈️</div>
+            <div class="card-tag tag-consumer">Consumer · Reader Tool</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Award Search &amp; Availability Explorer</div>
+            <div class="card-desc">14 award flight results across 6 programs with live ¢/pt calculations against TPG benchmark valuations. Filter by program, cabin, transfer partner, and max points.</div>
+            <div class="card-footer">
+              <div class="card-chips">
+                <span class="chip">TPG valuations</span>
+                <span class="chip">¢/pt overlay</span>
+              </div>
+              <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card Recommender -->
+        <a class="proto-card compact theme-card" href="tpg_card_recommender.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">💳</div>
+            <div class="card-tag tag-consumer">Consumer · Conversion Tool</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Card Stack Recommender</div>
+            <div class="card-desc">3-step wizard: spending by category → goals → personalized 2–3 card recommendation with earnings bar charts, net annual value, and Apply CTAs.</div>
+            <div class="card-footer">
+              <div class="card-chips">
+                <span class="chip">8 cards</span>
+                <span class="chip">Net value calc</span>
+              </div>
+              <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Portfolio Tracker -->
+        <a class="proto-card compact theme-portfolio" href="tpg_portfolio.html">
+          <div class="card-visual">
+            <div class="card-visual-icon">📱</div>
+            <div class="card-tag tag-consumer">Consumer · App Experience</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Points Portfolio &amp; Redemption Tracker</div>
+            <div class="card-desc">App-first design (phone frame on desktop). Pre-loaded $3,744 across 6 programs. Live ¢/pt redemption meter and inline balance editing.</div>
+            <div class="card-footer">
+              <div class="card-chips">
+                <span class="chip">Phone frame</span>
+                <span class="chip">¢/pt meter</span>
+              </div>
+              <div class="card-cta">Open <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+        </a>
+
       </div>
     </div>
   </section>
@@ -810,11 +769,24 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-note">
-      These prototypes are self-contained HTML demos built for a PM, Internal Tools interview. No live APIs, no backend dependencies — everything runs client-side. All card data, valuations, and award results are illustrative.
+      These prototypes are self-contained HTML demos built for a PM, Internal Tools interview at The Points Guy / Red Ventures. No live APIs, no backend dependencies — everything runs client-side. All card data, valuations, and award results are illustrative.
     </div>
     <div class="footer-divider"></div>
     <div class="footer-wordmark">The Points Guy · Product Vision · 2026</div>
   </footer>
+
+  <script>
+    function toggleExtras() {
+      const body = document.getElementById('extras-body');
+      const chevron = document.getElementById('extras-chevron');
+      const toggle = document.getElementById('extras-toggle');
+      const isOpen = body.classList.contains('open');
+
+      body.classList.toggle('open', !isOpen);
+      chevron.classList.toggle('open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    }
+  </script>
 
 </body>
 </html>
