@@ -325,27 +325,28 @@
       margin-top: 28px;
       background: var(--white);
       border: 1px solid var(--border);
+      border-left: 3px solid var(--tpg-gold);
       border-radius: 6px;
-      padding: 20px 24px;
+      padding: 24px 28px;
     }
     .eval-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--tpg-gold);
-      margin-bottom: 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 18px;
+      letter-spacing: -0.2px;
     }
-    .eval-rows { display: flex; flex-direction: column; gap: 10px; }
-    .eval-row { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+    .eval-rows { display: flex; flex-direction: column; gap: 14px; }
+    .eval-row { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
     .eval-row-name {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--ink);
-      min-width: 130px;
+      min-width: 140px;
       flex-shrink: 0;
     }
-    .eval-row-metrics { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .eval-row-metrics { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
     /* ── LEAD PROTOTYPES ── */
     .prototypes-section {
@@ -702,7 +703,7 @@
     </div>
 
     <div class="eval-block">
-      <div class="eval-label">How we'd evaluate this</div>
+      <h3 class="eval-label">How we'd evaluate this</h3>
       <div class="eval-rows">
         <div class="eval-row">
           <div class="eval-row-name">Content quality</div>
