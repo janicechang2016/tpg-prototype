@@ -683,32 +683,19 @@
   </section>
 
 
-  <!-- SANITY CALLOUT -->
+  <!-- WHAT'S NEXT -->
   <section class="sanity-section" style="margin-top: 48px;">
-    <div class="sanity-inner">
+    <div class="sanity-inner" style="grid-template-columns: 1fr; max-width: 700px;">
       <div>
-        <div class="section-label">For Engineers Who Want to Go Deeper</div>
-        <h2 class="sanity-title">What's running under the hood</h2>
-        <p class="sanity-body">All three prototypes share a single data source: the same CMS TPG is migrating to. That's not incidental — when content is structured consistently, the tools built on top of it can be smarter without each one needing its own data pipeline.</p>
-        <p class="sanity-body" style="margin-top:12px">The dashboard, CLI, and chat panel are deliberately thin on their own. The leverage is the shared content graph underneath — one schema change propagates to every surface.</p>
-      </div>
-      <div class="sanity-stack">
-        <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">Agent Context (MCP)</span><span class="stack-row-tag">GA · AI Integration</span></div>
-          <div class="stack-row-desc">Read-only, schema-aware API surface for Claude — powers the chat panel's context assembly without exposing drafts or write access</div>
-        </div>
-        <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">GROQ + pt::text()</span><span class="stack-row-tag">GA · Data Layer</span></div>
-          <div class="stack-row-desc">Graph-relational queries with Portable Text extraction — the dashboard and CLI share the same freshness audit query</div>
-        </div>
-        <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">Sanity Functions</span><span class="stack-row-tag">Experimental · Automation</span></div>
-          <div class="stack-row-desc">Event-triggered serverless functions that detect valuation changes, check affiliate links, and score freshness on publish — without manual intervention</div>
-        </div>
-        <div class="stack-row">
-          <div class="stack-row-top"><span class="stack-row-name">sanity exec</span><span class="stack-row-tag">GA · Developer Tool</span></div>
-          <div class="stack-row-desc">CLI extensibility for custom Node.js scripts — enables the tpg cms audit / enrich / draft commands with full Content Lake access</div>
-        </div>
+        <div class="section-label">What's Next</div>
+        <h2 class="sanity-title">Making this AI-native</h2>
+        <p class="sanity-body">All three demos are built on a shared content graph — Sanity as the CMS, with GROQ (Sanity's query language for reading structured content) as the data layer. The natural next step is exposing that graph as a tool surface that AI agents can call directly.</p>
+        <p class="sanity-body" style="margin-top:12px">Right now, engineers run <code style="font-family:monospace;font-size:13px;background:var(--cream-dark);padding:1px 5px;border-radius:3px">tpg cms audit</code> in a terminal. The next version: Claude Code — or any AI agent — invokes those same commands as tools in response to a natural language prompt. Two ways to get there:</p>
+        <ul class="sanity-body" style="margin-top:12px;padding-left:18px;display:flex;flex-direction:column;gap:10px">
+          <li><strong>Wrap Sanity directly</strong> — expose GROQ queries and document mutations as agent-callable tools, so an AI can read and write content without a human running commands</li>
+          <li><strong>Wrap the dashboard logic</strong> — expose the scoring model, flag detection, and update workflows already built on top of Sanity, so the agent inherits the business logic rather than rebuilding it</li>
+        </ul>
+        <p class="sanity-body" style="margin-top:16px">Either way, the workflow becomes: editor prompts → agent plans → CLI executes → Sanity updates. Content operations that currently require engineering time become composable and AI-driven.</p>
       </div>
     </div>
   </section>
@@ -746,7 +733,7 @@
       {target:'.pain-points .pain-point:nth-child(1)',title:'Problem 1: Content goes stale',body:'Editors are manually hunting for problems. The dashboard automates staleness detection — surfacing issues before they become reader complaints or missed revenue.',pos:'bottom'},
       {target:'.pain-points .pain-point:nth-child(2)',title:'Problem 2: Reader trust is eroding',body:'r/CreditCards readers document the credibility gap directly. The chat panel addresses it by showing sources and making the affiliate relationship transparent.',pos:'bottom'},
       {target:'.pain-points .pain-point:nth-child(3)',title:'Problem 3: The AI needs accurate data',body:'The chat panel is only as trustworthy as the content behind it. The CLI keeps that content enriched and current — it\'s the engineering foundation for the reader-facing experience.',pos:'bottom'},
-      {target:'.sanity-section',title:'The technical foundation',body:'All three solutions share a single data source — the same CMS TPG is migrating to. One schema change propagates to every surface. This section goes deeper for the engineering conversation.',pos:'top'}
+      {target:'.sanity-section',title:'Where this goes next',body:'The CLI commands engineers run today are the same interface AI agents would call tomorrow. This section frames the next step: making content operations AI-native by exposing the CMS as a tool surface agents can invoke directly.',pos:'top'}
     ];
     let _tStep=0,_tActive=false;
     function startTour(){_tStep=0;_tActive=true;_tShow();}
