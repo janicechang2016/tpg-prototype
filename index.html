@@ -311,6 +311,42 @@
       flex-shrink: 0;
     }
 
+    .vision-stmt {
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px;
+      font-style: italic;
+      color: #3d3a35;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eval-block {
+      margin-top: 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 24px;
+    }
+    .eval-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--tpg-gold);
+      margin-bottom: 14px;
+    }
+    .eval-rows { display: flex; flex-direction: column; gap: 10px; }
+    .eval-row { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+    .eval-row-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      min-width: 130px;
+      flex-shrink: 0;
+    }
+    .eval-row-metrics { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
     /* ── LEAD PROTOTYPES ── */
     .prototypes-section {
       max-width: 1100px;
@@ -618,6 +654,7 @@
   <!-- PAIN POINTS -->
   <section class="thesis-section">
     <h2 class="thesis-title">Three problems worth solving</h2>
+    <p class="vision-stmt">The goal: content that maintains itself, readers who trust what they read, and AI that's accurate because its data is.</p>
     <div class="pain-points">
 
       <div class="pain-point">
@@ -625,12 +662,6 @@
         <div class="pain-point-body">Editors manually check hundreds of articles for expired offers, broken links, and outdated valuations — by the time something surfaces, it's usually a reader complaint or a missed revenue event.</div>
         <div class="pain-point-sub-label">Solution</div>
         <div class="pain-point-solution">A dashboard that scores and ranks articles by staleness automatically, so editors spend time fixing problems rather than hunting for them.</div>
-        <div class="pain-point-sub-label">Success Metrics</div>
-        <ul class="pain-point-metrics">
-          <li>% of stale articles caught before reader complaints</li>
-          <li>Reduction in affiliate link rot rate</li>
-          <li>Mean time-to-update after a valuation change</li>
-        </ul>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_cms_dashboard.html">
             <span class="pain-point-demo-icon">📋</span>
@@ -645,12 +676,6 @@
         <div class="pain-point-body">In r/CreditCards threads, readers say it directly: "take it with a grain of salt," "heavy bias toward affiliate partners," "TPG is for basics" — and defect to Doctor of Credit for real analysis.</div>
         <div class="pain-point-sub-label">Solution</div>
         <div class="pain-point-solution">An AI assistant that cites its sources and shows its CMS data directly, so the affiliate relationship is transparent rather than hidden behind editorial polish.</div>
-        <div class="pain-point-sub-label">Success Metrics</div>
-        <ul class="pain-point-metrics">
-          <li>Session depth and return visit rate</li>
-          <li>% of users citing source quality in post-session surveys</li>
-          <li>Reduction in forum complaints about affiliate bias over 6 months</li>
-        </ul>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_prototype.html">
             <span class="pain-point-demo-icon">💬</span>
@@ -665,12 +690,6 @@
         <div class="pain-point-body">Keeping hundreds of articles enriched and structured isn't something editors can do manually at scale — and inaccurate content means inaccurate AI answers.</div>
         <div class="pain-point-sub-label">Solution</div>
         <div class="pain-point-solution">A CLI engineers use to audit, enrich, and update article metadata programmatically — keeping the content graph accurate enough for the AI assistant to be reliable.</div>
-        <div class="pain-point-sub-label">Success Metrics</div>
-        <ul class="pain-point-metrics">
-          <li>AI response accuracy rate</li>
-          <li>Reduction in sourcing errors flagged by readers</li>
-          <li>Content enrichment coverage across the catalog</li>
-        </ul>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_cli.html">
             <span class="pain-point-demo-icon">⌨️</span>
@@ -681,6 +700,25 @@
       </div>
 
     </div>
+
+    <div class="eval-block">
+      <div class="eval-label">How we'd evaluate this</div>
+      <div class="eval-rows">
+        <div class="eval-row">
+          <div class="eval-row-name">Content quality</div>
+          <div class="eval-row-metrics">% stale articles caught before reader complaints · affiliate link rot rate · mean time-to-update after a valuation change</div>
+        </div>
+        <div class="eval-row">
+          <div class="eval-row-name">Reader trust</div>
+          <div class="eval-row-metrics">Session depth · return visit rate · % citing source quality in post-session surveys · forum complaint reduction over 6 months</div>
+        </div>
+        <div class="eval-row">
+          <div class="eval-row-name">Data accuracy</div>
+          <div class="eval-row-metrics">AI response accuracy rate · sourcing errors flagged by readers · content enrichment coverage across the catalog</div>
+        </div>
+      </div>
+    </div>
+
   </section>
 
 
