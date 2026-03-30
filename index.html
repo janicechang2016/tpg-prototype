@@ -614,6 +614,68 @@
       .card-visual { padding: 20px 20px 16px; min-height: 110px; }
       .card-visual-icon { font-size: 28px; }
     }
+    /* ── USER PERSONA ── */
+    .persona-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--tpg-navy);
+      border-radius: 6px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+    }
+    .persona-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .persona-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .persona-desc {
+      font-size: 13px;
+      color: #3d3a35;
+      line-height: 1.6;
+    }
+
+    /* ── VISION PILLARS ── */
+    .pillars-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--tpg-gold);
+      margin-bottom: 12px;
+    }
+    .vision-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .vision-pillar {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+    .pillar-icon { font-size: 20px; margin-bottom: 8px; }
+    .pillar-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .pillar-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    @media (max-width: 640px) {
+      .vision-pillars { grid-template-columns: 1fr; }
+    }
+
     /* ── GUIDED TOUR ── */
     .tour-hl{position:fixed;z-index:9998;border-radius:6px;box-shadow:0 0 0 4000px rgba(0,0,0,.52);outline:2px solid rgba(201,168,76,.75);pointer-events:none;transition:left .3s ease,top .3s ease,width .3s ease,height .3s ease;display:none}
     .tour-tt{position:fixed;z-index:9999;background:#fff;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06);width:300px;padding:20px 22px 17px;font-family:'DM Sans',sans-serif;display:none}
@@ -649,19 +711,47 @@
 
   <!-- HERO -->
   <section class="hero">
-    <h1 class="hero-title">A CMS migration: three problems worth solving</h1>
+    <h1 class="hero-title">Publish with confidence, at scale, every single time.</h1>
   </section>
 
   <!-- PAIN POINTS -->
   <section class="thesis-section">
-    <p class="vision-stmt">The goal: content that maintains itself, readers who trust what they read, and AI that's accurate because its data is.</p>
+    <p class="vision-stmt">Publishing failures, data inaccuracies, and a clunky UI have eroded trust in the CMS. As volume grows, so does the cost of errors — and today's CMS offers no tools to prevent them. AI is an afterthought, not a collaborator.</p>
+
+    <!-- USER PERSONA -->
+    <div class="persona-block">
+      <div class="persona-label">Who we're solving for</div>
+      <div class="persona-name">Internal CMS Editor</div>
+      <div class="persona-desc">Accountable for everything that goes live — quality, timing, and brand voice. Not a developer, but comfortable with technology and increasingly expected to do more with less. Sees AI as a genuine opportunity, but frustrated that today's tools don't integrate it meaningfully into the workflow.</div>
+    </div>
+
+    <!-- VISION PILLARS -->
+    <div class="pillars-label">Product vision</div>
+    <div class="vision-pillars">
+      <div class="vision-pillar">
+        <div class="pillar-icon">🤖</div>
+        <div class="pillar-title">AI-native workflows</div>
+        <div class="pillar-desc">AI embedded in drafting, review, tagging, and QA — not bolted on after the fact.</div>
+      </div>
+      <div class="vision-pillar">
+        <div class="pillar-icon">✅</div>
+        <div class="pillar-title">Guaranteed delivery</div>
+        <div class="pillar-desc">Scheduling visibility, alerts, and clarity so CMS teams always know what's live, what's pending, and what needs action.</div>
+      </div>
+      <div class="vision-pillar">
+        <div class="pillar-icon">⚡</div>
+        <div class="pillar-title">Modern, fast UI</div>
+        <div class="pillar-desc">An interface that surfaces the right data at the right moment — reducing the learning curve and the manual work.</div>
+      </div>
+    </div>
+
     <div class="pain-points">
 
       <div class="pain-point">
-        <div class="pain-point-headline">Content goes stale without anyone noticing</div>
-        <div class="pain-point-body">Editors manually check hundreds of articles for expired offers, broken links, and outdated valuations — by the time something surfaces, it's usually a reader complaint or a missed revenue event.</div>
+        <div class="pain-point-headline">No single view of what's live, pending, or flagged</div>
+        <div class="pain-point-body">Editors have no central place to see the state of their content — what's current, what's been flagged, what's waiting for review. Problems surface through reader complaints, not the system.</div>
         <div class="pain-point-sub-label">Solution</div>
-        <div class="pain-point-solution">A dashboard that scores and ranks articles by staleness automatically, so editors spend time fixing problems rather than hunting for them.</div>
+        <div class="pain-point-solution">A dashboard that gives editors one view of content health — scored, prioritized, and always current — so they spend time fixing problems, not hunting for them.</div>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_cms_dashboard.html">
             <span class="pain-point-demo-icon">📋</span>
@@ -672,10 +762,10 @@
       </div>
 
       <div class="pain-point">
-        <div class="pain-point-headline">Readers don't trust TPG's recommendations</div>
-        <div class="pain-point-body">In r/CreditCards threads, readers say it directly: "take it with a grain of salt," "heavy bias toward affiliate partners," "TPG is for basics" — and defect to Doctor of Credit for real analysis.</div>
+        <div class="pain-point-headline">Errors reach readers before the system catches them</div>
+        <div class="pain-point-body">When content is wrong or outdated, readers notice first — not the CMS. In r/CreditCards threads, the feedback is blunt: "take it with a grain of salt," "heavy affiliate bias," "TPG is for basics." Trust erodes before the team even knows there's a problem.</div>
         <div class="pain-point-sub-label">Solution</div>
-        <div class="pain-point-solution">An AI assistant that cites its sources and shows its CMS data directly, so the affiliate relationship is transparent rather than hidden behind editorial polish.</div>
+        <div class="pain-point-solution">An AI assistant that cites its sources and reads directly from CMS-verified data — so readers see what the system knows, not just what the article says.</div>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_prototype.html">
             <span class="pain-point-demo-icon">💬</span>
@@ -686,10 +776,10 @@
       </div>
 
       <div class="pain-point">
-        <div class="pain-point-headline">The AI is only as trustworthy as the data behind it</div>
-        <div class="pain-point-body">Keeping hundreds of articles enriched and structured isn't something editors can do manually at scale — and inaccurate content means inaccurate AI answers.</div>
+        <div class="pain-point-headline">Outdated tooling slows onboarding and keeps manual work in place</div>
+        <div class="pain-point-body">New team members face a clunky interface with no standard workflows, extending ramp time. Meanwhile, manual tagging and enrichment persist because the tools don't support anything better — and the AI is only as reliable as the data behind it.</div>
         <div class="pain-point-sub-label">Solution</div>
-        <div class="pain-point-solution">A CLI engineers use to audit, enrich, and update article metadata programmatically — keeping the content graph accurate enough for the AI assistant to be reliable.</div>
+        <div class="pain-point-solution">A CLI engineers use to audit, enrich, and update article metadata at scale — reducing manual overhead and keeping the content graph accurate enough for AI to read reliably.</div>
         <div class="pain-point-demo">
           <a class="pain-point-demo-link" href="tpg_cli.html">
             <span class="pain-point-demo-icon">⌨️</span>
@@ -705,16 +795,16 @@
       <h3 class="eval-label">How we'd evaluate this</h3>
       <div class="eval-rows">
         <div class="eval-row">
-          <div class="eval-row-name">Content quality</div>
+          <div class="eval-row-name">Publishing speed</div>
+          <div class="eval-row-metrics">Time-to-publish per article · editorial throughput per writer per week · time-to-first-draft with AI scaffolding</div>
+        </div>
+        <div class="eval-row">
+          <div class="eval-row-name">Accuracy before publish</div>
           <div class="eval-row-metrics">% stale articles caught before reader complaints · affiliate link rot rate · mean time-to-update after a valuation change</div>
         </div>
         <div class="eval-row">
-          <div class="eval-row-name">Reader trust</div>
-          <div class="eval-row-metrics">Session depth · return visit rate · % citing source quality in post-session surveys · forum complaint reduction over 6 months</div>
-        </div>
-        <div class="eval-row">
-          <div class="eval-row-name">Data accuracy</div>
-          <div class="eval-row-metrics">AI response accuracy rate · sourcing errors flagged by readers · content enrichment coverage across the catalog</div>
+          <div class="eval-row-name">Manual work reduced</div>
+          <div class="eval-row-metrics">Reduction in manual audit time · tagging accuracy with AI assistance · content enrichment coverage across the catalog</div>
         </div>
       </div>
     </div>
@@ -752,10 +842,10 @@
   <script>
     // ── GUIDED TOUR ──
     const TOUR_STEPS=[
-      {target:'.hero',title:'Here\'s what this is',body:'Three editorial problems TPG is facing today — each with a working solution. Click through to see each one.',pos:'bottom'},
-      {target:'.pain-points .pain-point:nth-child(1)',title:'Content goes stale',body:'<span class="tt-prob-label">Problem</span>Editors manually hunt for stale articles — and usually find out too late, from a reader complaint.<span class="tt-soln-label">Solution</span>The dashboard scores and surfaces stale content automatically so editors spend time fixing, not searching.',pos:'bottom'},
-      {target:'.pain-points .pain-point:nth-child(2)',title:'Reader trust is eroding',body:'<span class="tt-prob-label">Problem</span>r/CreditCards readers say it directly: TPG recommendations feel affiliate-driven, not editorially independent.<span class="tt-soln-label">Solution</span>The chat panel shows its sources and CMS data openly — transparency as a feature, not an afterthought.',pos:'bottom'},
-      {target:'.pain-points .pain-point:nth-child(3)',title:'The AI needs accurate data',body:'<span class="tt-prob-label">Problem</span>The chat panel is only as trustworthy as the content graph behind it — and editors can\'t maintain that at scale manually.<span class="tt-soln-label">Solution</span>The CLI lets engineers audit, enrich, and update article metadata programmatically, keeping the data the AI reads accurate.',pos:'bottom'}
+      {target:'.hero',title:'Here\'s what this is',body:'Three problems the Internal CMS Editor faces today — each with a working solution. Click through to see each one.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(1)',title:'No single view',body:'<span class="tt-prob-label">Problem</span>Editors have no central place to see what\'s live, flagged, or waiting for review — problems surface through reader complaints, not the system.<span class="tt-soln-label">Solution</span>The dashboard gives editors one prioritized view of content health, updated automatically.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(2)',title:'Errors reach readers first',body:'<span class="tt-prob-label">Problem</span>When content is wrong or outdated, readers notice before the CMS does — eroding trust before the team knows there\'s a problem.<span class="tt-soln-label">Solution</span>The chat panel surfaces CMS-verified, sourced data so readers can see what the system actually knows.',pos:'bottom'},
+      {target:'.pain-points .pain-point:nth-child(3)',title:'Manual work can\'t scale',body:'<span class="tt-prob-label">Problem</span>Outdated tooling slows onboarding and keeps manual tagging and enrichment in place — the AI is only as reliable as the data behind it.<span class="tt-soln-label">Solution</span>The CLI lets engineers manage metadata at scale, reducing manual overhead and keeping the content graph accurate.',pos:'bottom'}
     ];
     let _tStep=0,_tActive=false;
     function startTour(){_tStep=0;_tActive=true;_tShow();}
